@@ -292,23 +292,51 @@
   }
   initContactForm();
 
-  /* ---------- MENÚ MÓVIL ---------- */
-  const toggleBtn = document.getElementById('menuToggle');
-  const nav = document.getElementById('mainNav');
-  if(toggleBtn && nav) {
-    toggleBtn.addEventListener('click', (e) => {
+ // ========== MOBİL MENÜ (SAĞLAM VERSİYON) ==========
+(function() {
+  // Menü öğelerini her seferinde yeniden seç (sayfa değişse bile çalışsın)
+  function initMobileMenu() {
+    const toggleBtn = document.getElementById('menuToggle');
+    const nav = document.getElementById('mainNav');
+    
+    if (!toggleBtn || !nav) return;
+    
+    // Eski event listener'ları temizlemek için yeni bir klon oluştur (opsiyonel)
+    // Bu, aynı butona birden fazla listener eklenmesini engeller
+    const newToggleBtn = toggleBtn.cloneNode(true);
+    toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
+    
+    // Menüyü aç/kapat
+    newToggleBtn.addEventListener('click', function(e) {
+      e.preventDefault();
       e.stopPropagation();
       nav.classList.toggle('active');
     });
-    nav.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => nav.classList.remove('active'));
+    
+    // Menü içindeki linklere tıklanınca menüyü kapat
+    const navLinks = nav.querySelectorAll('a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('active');
+      });
     });
-    document.addEventListener('click', (event) => {
-      if (nav.classList.contains('active') && !nav.contains(event.target) && event.target !== toggleBtn) {
+    
+    // Sayfa dışına tıklanınca menüyü kapat (opsiyonel)
+    document.addEventListener('click', function(event) {
+      if (nav.classList.contains('active') && 
+          !nav.contains(event.target) && 
+          event.target !== newToggleBtn) {
         nav.classList.remove('active');
       }
     });
   }
+  
+  // Sayfa yüklendiğinde ve her sayfa değişiminde (SPA değil ama yine de)
+  initMobileMenu();
+  
+  // Eğer sayfa dinamik olarak değişiyorsa (Turbolinks vb. yok) sorun yok.
+  // Ancak yine de her yüklemede çalışacak.
+})();
 
   /* ---------- SLIDER ---------- */
   const slides = document.querySelectorAll('.slide');
