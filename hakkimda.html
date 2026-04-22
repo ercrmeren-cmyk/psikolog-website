@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sobre mí · Maria Dolores Barrios Nevado</title>
   <meta name="description" content="Psicóloga clínica Maria Dolores Barrios Nevado: formación, experiencia clínica, herramientas de evaluación y enfoques terapéuticos.">
+  <meta name="robots" content="index,follow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -14,27 +15,27 @@
   <header class="site-header">
     <div class="container header-container">
       <div class="logo logo-signature">
-        <a href="index.html">
+        <a href="anasayfa.html">
           <span class="logo-subtitle">Psicóloga Clínica</span>
           <span class="logo-name">Maria Dolores Barrios Nevado</span>
         </a>
       </div>
-      <nav class="main-nav" id="mainNav">
+      <nav class="main-nav" id="mainNav" aria-label="Navegación principal">
         <ul class="nav-list">
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="hakkimda.html" class="active">Sobre mí</a></li>
+          <li><a href="anasayfa.html">Inicio</a></li>
+          <li><a href="hakkimda.html" class="active" aria-current="page">Sobre mí</a></li>
           <li><a href="calisma-alanlari.html">Áreas</a></li>
           <li><a href="blog.html">Blog</a></li>
           <li><a href="iletisim.html">Contacto</a></li>
         </ul>
       </nav>
-      <button class="mobile-menu-toggle" id="menuToggle" aria-label="Menú">
+      <button class="mobile-menu-toggle" id="menuToggle" type="button" aria-label="Abrir o cerrar menú principal" aria-controls="mainNav" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="page-header page-header-image section-padding-sm" style="background-image: linear-gradient(rgba(245, 239, 230, 0.85), rgba(245, 239, 230, 0.9)), url('images/hakkimda/who1.jpg'); background-size: cover; background-position: center 30%;">
       <div class="container">
         <h1 class="page-title">Maria Dolores Barrios Nevado</h1>
@@ -215,13 +216,6 @@
     <a href="https://wa.me/905072882279" class="designer-link" target="_blank" rel="noopener noreferrer">Designed & Developed by Eren Web Studio</a>
   </div>
 </footer>
-  <script src="js/script.js"></script>
-  <script>
-  (function() {
-    const subFooter = document.querySelector('.sub-footer-links');
-    if (subFooter) subFooter.style.display = 'flex';
-  })();
-  </script>
-  <script src="js/script.js"></script>
+  <script src="js/script.js" defer></script>
 </body>
 </html>

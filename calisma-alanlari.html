@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Áreas de Trabajo · Maria Dolores Barrios Nevado | Psicóloga Clínica</title>
   <meta name="description" content="Áreas de especialización de Maria Dolores Barrios Nevado, psicóloga clínica: salud mental infanto-juvenil, psicología forense, neuropsicología, terapia de esquemas, terapia online y más.">
+  <meta name="robots" content="index,follow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -14,27 +15,27 @@
   <header class="site-header">
     <div class="container header-container">
       <div class="logo logo-signature">
-        <a href="index.html">
+        <a href="anasayfa.html">
           <span class="logo-subtitle">Psicóloga Clínica</span>
           <span class="logo-name">Maria Dolores Barrios Nevado</span>
         </a>
       </div>
-      <nav class="main-nav" id="mainNav">
+      <nav class="main-nav" id="mainNav" aria-label="Navegación principal">
         <ul class="nav-list">
-          <li><a href="index.html">Inicio</a></li>
+          <li><a href="anasayfa.html">Inicio</a></li>
           <li><a href="hakkimda.html">Sobre mí</a></li>
-          <li><a href="calisma-alanlari.html" class="active">Áreas</a></li>
+          <li><a href="calisma-alanlari.html" class="active" aria-current="page">Áreas</a></li>
           <li><a href="blog.html">Blog</a></li>
           <li><a href="iletisim.html">Contacto</a></li>
         </ul>
       </nav>
-      <button class="mobile-menu-toggle" id="menuToggle" aria-label="Menú">
+      <button class="mobile-menu-toggle" id="menuToggle" type="button" aria-label="Abrir o cerrar menú principal" aria-controls="mainNav" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <!-- Encabezado de página -->
     <section class="page-header page-header-image section-padding-sm" style="background-image: linear-gradient(rgba(245, 239, 230, 0.85), rgba(245, 239, 230, 0.9)), url('images/calisma-alanlari/4.jpg'); background-size: cover; background-position: center;">
       <div class="container">
@@ -48,7 +49,7 @@
       <div class="container">
         <div class="card-grid">
           <!-- 1. Salud Mental Infantojuvenil (CAMHS) -->
-          <div class="service-detail-card soft-card fade-in">
+          <article class="service-detail-card soft-card fade-in">
             <div class="service-icon-large">🧩</div>
             <h3>Salud Mental Infantojuvenil (CAMHS)</h3>
             <p>Con experiencia en unidades de hospitalización Tier 4, ofrezco terapia especializada para adolescentes con trauma complejo, TEPT, trastornos del estado de ánimo, ideación suicida, trastornos alimentarios, TEA, TOC y primeros episodios psicóticos. Trabajo en estrecha colaboración con las familias y equipos multidisciplinarios.</p>
@@ -57,10 +58,10 @@
               <li>✓ ACT, CFT, CBT, Terapia de Esquemas</li>
               <li>✓ Intervenciones centradas en la familia</li>
             </ul>
-          </div>
+          </article>
 
           <!-- 2. Psicología Forense y Gestión de Riesgos -->
-          <div class="service-detail-card soft-card fade-in">
+          <article class="service-detail-card soft-card fade-in">
             <div class="service-icon-large">⚖️</div>
             <h3>Psicología Forense y Gestión de Riesgos</h3>
             <p>Amplia experiencia en servicios forenses de baja y mediana seguridad. Realizo formulación psicológica para trastornos mentales graves, conducta delictiva y psicosis. Evaluación de riesgo HCR-20, intervenciones individuales y grupales (CBTp, manejo de la ira, apoyo entre pares basado en MBTi).</p>
@@ -69,10 +70,10 @@
               <li>✓ Trabajo sobre conducta delictiva</li>
               <li>✓ Reinserción social</li>
             </ul>
-          </div>
+          </article>
 
           <!-- 3. Neuropsicología y Rehabilitación -->
-          <div class="service-detail-card soft-card fade-in">
+          <article class="service-detail-card soft-card fade-in">
             <div class="service-icon-large">🧠</div>
             <h3>Neuropsicología y Rehabilitación</h3>
             <p>Evaluación neuropsicológica, psicoeducación, manejo del estrés y desarrollo de estrategias compensatorias para personas con daño cerebral adquirido. Apoyo en funciones cognitivas (memoria, atención), regulación emocional y autonomía en actividades de la vida diaria.</p>
@@ -81,10 +82,10 @@
               <li>✓ Rehabilitación cognitiva</li>
               <li>✓ Formación a cuidadores</li>
             </ul>
-          </div>
+          </article>
 
           <!-- 4. Discapacidad Intelectual y Apoyo Conductual Positivo -->
-          <div class="service-detail-card soft-card fade-in">
+          <article class="service-detail-card soft-card fade-in">
             <div class="service-icon-large">🌿</div>
             <h3>Discapacidad Intelectual y Apoyo Conductual Positivo</h3>
             <p>Evaluación psicológica, formulación y planificación de Apoyo Conductual Positivo (PBS) en servicios residenciales para adultos y CAMHS. Utilizo terapia informada en trauma y centrada en la compasión para desarrollar regulación emocional y estrategias de afrontamiento.</p>
@@ -93,21 +94,21 @@
               <li>✓ Formación al personal</li>
               <li>✓ Regulación emocional</li>
             </ul>
-          </div>
+          </article>
 
           <!-- 5. Terapia de Esquemas (Trauma Complejo y Personalidad) -->
-          <div class="service-detail-card soft-card fade-in">
+          <article class="service-detail-card soft-card fade-in">
             <div class="service-icon-large">💞</div>
             <h3>Terapia de Esquemas (Trauma Complejo y Personalidad)</h3>
             <p>Formación aprobada por ISST en curso. Trabajo con esquemas desadaptativos tempranos y su impacto en los patrones de personalidad y dinámicas relacionales en la edad adulta. Enfoque profundo basado en la re-parentización para trauma complejo y trastornos de personalidad.</p>
-          </div>
+          </article>
 
           <!-- 6. Terapia Online (Inglés y Español) -->
-          <div class="service-detail-card soft-card fade-in">
+          <article class="service-detail-card soft-card fade-in">
             <div class="service-icon-large">💻</div>
             <h3>Terapia Online (Inglés y Español)</h3>
             <p>Sesiones online en inglés y español a través de plataformas seguras. Terapia individual para adultos en ansiedad, depresión, autoestima y trastorno por estrés postraumático.</p>
-          </div>
+          </article>
         </div>
 
         <!-- Imagen adicional -->
@@ -174,13 +175,6 @@
     <a href="https://wa.me/905072882279" class="designer-link" target="_blank" rel="noopener noreferrer">Designed & Developed by Eren Web Studio</a>
   </div>
 </footer>
-  <script src="js/script.js"></script>
-  <script>
-  (function() {
-    const subFooter = document.querySelector('.sub-footer-links');
-    if (subFooter) subFooter.style.display = 'flex';
-  })();
-  </script>
-  <script src="js/script.js"></script>
+  <script src="js/script.js" defer></script>
 </body>
 </html>

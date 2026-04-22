@@ -1,6 +1,8 @@
 // js/script.js - Versión final optimizada con validación de textarea
 (function(){
   'use strict';
+  if (window.__psychSiteScriptInitialized) return;
+  window.__psychSiteScriptInitialized = true;
 
   /* ---------- FUNCIONES AUXILIARES (TOAST) ---------- */
   function showToast(message, type = 'info', duration = 5000) {
@@ -284,13 +286,208 @@
     });
   }
 
-  // Reemplazar formulario para limpiar listeners antiguos
-  const oldForm = document.getElementById('contactForm');
-  if (oldForm) {
-    const newForm = oldForm.cloneNode(true);
-    oldForm.parentNode.replaceChild(newForm, oldForm);
-  }
   initContactForm();
+
+  /* ---------- CARRUSEL TESTIMONIOS (INICIO) ---------- */
+  function initHomeReviewsCarousel() {
+    const root = document.getElementById('home-reviews-carousel');
+    if (!root || root.dataset.carouselInitialized === 'true') return;
+    root.dataset.carouselInitialized = 'true';
+
+    const track = document.getElementById('home-reviews-track');
+    const viewport = root.querySelector('.home-reviews-carousel__viewport');
+    const prevBtn = root.querySelector('.home-reviews-carousel__btn--prev');
+    const nextBtn = root.querySelector('.home-reviews-carousel__btn--next');
+    const dotsWrap = root.querySelector('.home-reviews-carousel__dots');
+    if (!track || !viewport || !prevBtn || !nextBtn || !dotsWrap) return;
+
+    const slides = Array.from(track.querySelectorAll('.home-reviews-carousel__slide'));
+    const total = slides.length;
+    if (total === 0) return;
+
+    let index = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    function loadSlideImages(slideEl) {
+      if (!slideEl) return;
+      slideEl.querySelectorAll('img.home-reviews-carousel__img--lazy[data-src]').forEach(img => {
+        const url = img.getAttribute('data-src');
+        if (!url) return;
+        img.removeAttribute('data-src');
+        img.classList.remove('home-reviews-carousel__img--lazy');
+        img.removeAttribute('loading');
+        img.setAttribute('loading', 'eager');
+        img.src = url;
+      });
+    }
+
+    function syncUI() {
+      track.style.setProperty('--home-carousel-index', String(index));
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === total - 1;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('home-reviews-carousel__slide--active', i === index);
+      });
+      dotsWrap.querySelectorAll('.home-reviews-carousel__dot').forEach((dot, i) => {
+        const selected = i === index;
+        dot.setAttribute('aria-selected', selected ? 'true' : 'false');
+        dot.tabIndex = selected ? 0 : -1;
+      });
+    }
+
+    function setIndex(next) {
+      const clamped = Math.max(0, Math.min(total - 1, next));
+      index = clamped;
+      syncUI();
+      loadSlideImages(slides[index]);
+    }
+
+    dotsWrap.innerHTML = '';
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'home-reviews-carousel__dot';
+      dot.setAttribute('role', 'tab');
+      dot.setAttribute('aria-label', `Grupo ${i + 1} de ${total}`);
+      dot.addEventListener('click', () => setIndex(i));
+      dotsWrap.appendChild(dot);
+    });
+
+    prevBtn.addEventListener('click', () => setIndex(index - 1));
+    nextBtn.addEventListener('click', () => setIndex(index + 1));
+
+    viewport.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setIndex(index - 1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setIndex(index + 1);
+      }
+    });
+
+    viewport.addEventListener(
+      'touchstart',
+      e => {
+        if (!e.changedTouches.length) return;
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      },
+      { passive: true }
+    );
+    viewport.addEventListener(
+      'touchend',
+      e => {
+        if (!e.changedTouches.length) return;
+        const dx = e.changedTouches[0].screenX - touchStartX;
+        const dy = e.changedTouches[0].screenY - touchStartY;
+        if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy)) return;
+        if (dx < 0) setIndex(index + 1);
+        else setIndex(index - 1);
+      },
+      { passive: true }
+    );
+
+    setIndex(0);
+  }
+
+  function initHomeReviewsLightbox(carouselRoot) {
+    if (!carouselRoot || carouselRoot.dataset.lightboxInitialized === 'true') return;
+    carouselRoot.dataset.lightboxInitialized = 'true';
+
+    let activeOverlay = null;
+    let onKeyDown = null;
+
+    function resolveImgUrl(img) {
+      const ds = img.getAttribute('data-src');
+      if (ds) return ds;
+      const s = img.currentSrc || img.src;
+      if (s && !s.startsWith('data:image/svg+xml')) return s;
+      return '';
+    }
+
+    function closeLightbox() {
+      if (!activeOverlay) return;
+      const el = activeOverlay;
+      activeOverlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+      if (onKeyDown) {
+        document.removeEventListener('keydown', onKeyDown);
+        onKeyDown = null;
+      }
+      activeOverlay = null;
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        el.remove();
+      };
+      el.addEventListener('transitionend', finish, { once: true });
+      setTimeout(finish, 480);
+    }
+
+    function openLightbox(img) {
+      const url = resolveImgUrl(img);
+      if (!url) return;
+
+      document.querySelectorAll('.home-reviews-lightbox').forEach(n => n.remove());
+      document.body.style.overflow = '';
+      if (onKeyDown) {
+        document.removeEventListener('keydown', onKeyDown);
+        onKeyDown = null;
+      }
+      activeOverlay = null;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'home-reviews-lightbox';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-label', 'Vista ampliada del testimonio');
+
+      overlay.innerHTML =
+        '<button type="button" class="home-reviews-lightbox__backdrop" aria-label="Cerrar vista ampliada"></button>' +
+        '<div class="home-reviews-lightbox__inner">' +
+        '<img class="home-reviews-lightbox__img" src="" alt="" decoding="async" />' +
+        '</div>';
+
+      const imgEl = overlay.querySelector('.home-reviews-lightbox__img');
+      const backdrop = overlay.querySelector('.home-reviews-lightbox__backdrop');
+      imgEl.src = url;
+      imgEl.alt = img.alt || '';
+
+      document.body.appendChild(overlay);
+      activeOverlay = overlay;
+
+      onKeyDown = function (e) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeLightbox();
+        }
+      };
+      document.addEventListener('keydown', onKeyDown);
+
+      backdrop.addEventListener('click', closeLightbox);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => overlay.classList.add('is-open'));
+      });
+    }
+
+    carouselRoot.addEventListener('dblclick', function (e) {
+      const img = e.target.closest('.home-review-card__img');
+      if (!img || !carouselRoot.contains(img)) return;
+      e.preventDefault();
+      openLightbox(img);
+    });
+  }
+
+  initHomeReviewsCarousel();
+
+  (function () {
+    const root = document.getElementById('home-reviews-carousel');
+    if (root) initHomeReviewsLightbox(root);
+  })();
 
  // ========== MOBİL MENÜ (SAĞLAM VERSİYON) ==========
 (function() {
@@ -300,17 +497,16 @@
     const nav = document.getElementById('mainNav');
     
     if (!toggleBtn || !nav) return;
-    
-    // Eski event listener'ları temizlemek için yeni bir klon oluştur (opsiyonel)
-    // Bu, aynı butona birden fazla listener eklenmesini engeller
-    const newToggleBtn = toggleBtn.cloneNode(true);
-    toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
-    
+
+    if (toggleBtn.dataset.menuInitialized === 'true') return;
+    toggleBtn.dataset.menuInitialized = 'true';
+
     // Menüyü aç/kapat
-    newToggleBtn.addEventListener('click', function(e) {
+    toggleBtn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
       nav.classList.toggle('active');
+      toggleBtn.setAttribute('aria-expanded', nav.classList.contains('active') ? 'true' : 'false');
     });
     
     // Menü içindeki linklere tıklanınca menüyü kapat
@@ -318,6 +514,7 @@
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
         nav.classList.remove('active');
+        toggleBtn.setAttribute('aria-expanded', 'false');
       });
     });
     
@@ -325,8 +522,9 @@
     document.addEventListener('click', function(event) {
       if (nav.classList.contains('active') && 
           !nav.contains(event.target) && 
-          event.target !== newToggleBtn) {
+          event.target !== toggleBtn) {
         nav.classList.remove('active');
+        toggleBtn.setAttribute('aria-expanded', 'false');
       }
     });
   }
