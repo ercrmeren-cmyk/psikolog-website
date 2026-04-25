@@ -598,4 +598,77 @@
     });
   });
 
+  const cards = document.querySelectorAll('.p-card');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  cards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(24px)';
+    card.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.22,0.61,0.36,1), box-shadow 0.35s ease';
+    observer.observe(card);
+  });
+
+  const sCards = document.querySelectorAll('.s-card');
+  const sObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, i * 120);
+        sObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  sCards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(28px)';
+    card.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.22,0.61,0.36,1), box-shadow 0.38s ease';
+    sObserver.observe(card);
+  });
+
+  /* ---------- FAQ Accordion ---------- */
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      document.querySelectorAll('.faq-question').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        b.nextElementSibling.classList.remove('is-open');
+      });
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        btn.nextElementSibling.classList.add('is-open');
+      }
+    });
+  });
+
+  const tCards = document.querySelectorAll('.mastesti-card');
+  const tObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, i * 130);
+        tObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  tCards.forEach(card => {
+    card.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.22,0.61,0.36,1), box-shadow 0.38s ease';
+    tObserver.observe(card);
+  });
+
 })();
