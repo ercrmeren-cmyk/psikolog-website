@@ -4389,6 +4389,19 @@ button[type="submit"].loading::after {
   color: #A78BFA;
 }
 
+.sfe-privacy-link {
+  color: rgba(191, 216, 184, 0.85);
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  font-weight: 400;
+}
+
+.sfe-privacy-link:hover {
+  color: #bfd8b8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ===== RESPONSIVE ===== */
 @media screen and (max-width: 1024px) {
   .sfe-top .sfe-container {
@@ -4788,6 +4801,23 @@ body.sched-cal-open {
   pointer-events: none;
 }
 
+.sched-cal-day--disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: rgba(208, 210, 218, 0.35) !important;
+  color: #9893a3 !important;
+  border-color: rgba(208, 210, 218, 0.55) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.sched-cal-day--disabled.sched-cal-day--today {
+  border-color: rgba(198, 200, 212, 0.65) !important;
+  background: rgba(200, 202, 214, 0.35) !important;
+  color: #928da0 !important;
+}
+
 .sched-cal-day--today {
   border-color: rgba(123, 97, 255, 0.45);
   background: rgba(167, 139, 250, 0.12);
@@ -4991,6 +5021,132 @@ body.sched-cal-open {
   font-weight: 500;
 }
 
+.sched-cal-char-counter {
+  display: block;
+  text-align: right;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  color: #8c96a5;
+  margin-top: 0.35rem;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease;
+}
+
+.sched-cal-char-counter--warning {
+  color: #c77d3a;
+}
+
+.sched-cal-char-counter--danger {
+  color: #c55c5c;
+}
+
+.sched-cal-field--consent {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(47, 111, 104, 0.06);
+  border: 1px solid rgba(47, 111, 104, 0.12);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.sched-cal-field--consent:hover {
+  background: rgba(47, 111, 104, 0.08);
+  border-color: rgba(47, 111, 104, 0.18);
+}
+
+.sched-cal-field--consent.sched-cal-field-error {
+  border-color: rgba(196, 92, 92, 0.45);
+  background: rgba(255, 248, 248, 0.65);
+}
+
+.sched-cal-consent__input {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0.12rem 0 0;
+  accent-color: #2f6f68;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.sched-cal-consent__input:focus-visible {
+  outline: 2px solid #2f6f68;
+  outline-offset: 2px;
+}
+
+.sched-cal-consent__label {
+  margin: 0;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #4a4456;
+  cursor: pointer;
+}
+
+.sched-cal-consent__link {
+  color: #2f6f68;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.sched-cal-consent__link:hover {
+  color: #25615a;
+}
+
+.sched-cal-consent__link:focus-visible {
+  outline: 2px solid #2f6f68;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.sched-cal-security-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(169, 199, 208, 0.2),
+    rgba(191, 216, 184, 0.18)
+  );
+  border: 1px solid rgba(47, 111, 104, 0.14);
+}
+
+.sched-cal-security-strip__icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+.sched-cal-security-strip__text {
+  margin: 0;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: #5a5368;
+}
+
+.sched-cal-system-msg {
+  margin: 0 0 0.65rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: #8b4545;
+  background: rgba(255, 236, 236, 0.85);
+  border: 1px solid rgba(196, 92, 92, 0.22);
+}
+
 .sched-cal-submit {
   margin-top: 0.35rem;
   width: 100%;
@@ -5137,5 +5293,91 @@ body.sched-cal-open {
     min-height: 3rem;
     font-size: 0.82rem;
     padding: 0.55rem 0.4rem;
+  }
+
+  .sched-cal-feedback__text {
+    font-size: 0.8rem;
+  }
+
+  .sched-cal-field--consent {
+    flex-wrap: wrap;
+  }
+
+  .sched-cal-char-counter {
+    font-size: 0.68rem;
+  }
+}
+
+/* ——— Privacy policy page ——— */
+.privacy-policy-page {
+  background: linear-gradient(180deg, #fdfcfa 0%, #f8f6f3 100%);
+}
+
+.privacy-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.privacy-meta {
+  font-size: 0.85rem;
+  color: #7a7288;
+  margin: 0 0 0.5rem;
+}
+
+.privacy-lead {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #5c5668;
+  margin: 0 0 1.5rem;
+}
+
+.privacy-policy-page h2 {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #0a0f2c;
+  margin: 2rem 0 0.65rem;
+}
+
+.privacy-policy-page h2:first-of-type {
+  margin-top: 0;
+}
+
+.privacy-policy-page p,
+.privacy-policy-page li {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #4a4456;
+}
+
+.privacy-policy-page ul {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.privacy-policy-page a {
+  color: #2f6f68;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.privacy-policy-page a:hover {
+  color: #25615a;
+}
+
+@media screen and (max-width: 768px) {
+  .privacy-policy-page h2 {
+    font-size: 1.15rem;
+  }
+
+  .privacy-policy-page p,
+  .privacy-policy-page li {
+    font-size: 0.9rem;
+  }
+
+  .sfe-bottom-inner {
+    flex-wrap: wrap;
+    padding: 0 0.75rem;
   }
 }

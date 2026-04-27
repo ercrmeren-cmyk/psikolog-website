@@ -3,10 +3,15 @@
  * Opens from .sched-cta__trigger; modal appended once to document.body.
  *
  * EmailJS: replace placeholders in EMAILJS_CONFIG with your dashboard values.
- * Template variables: selected_date, selected_time, user_name, user_email, user_phone, user_note
+ * Template variables: selected_date, selected_time, user_name, user_email, user_phone, user_note,
+ *                    recaptcha_token. Keep RECAPTCHA_SITE_KEY in sync with the reCAPTCHA script URL on each page.
+ * GDPR: users must accept the privacy policy checkbox before submit.
  */
 (function () {
   'use strict';
+
+  /** ——— Google reCAPTCHA v3 — replace YOUR_SITE_KEY with https://www.google.com/recaptcha/admin ——— */
+  var RECAPTCHA_SITE_KEY = 'YOUR_SITE_KEY';
 
   /** ——— EmailJS: replace with your real IDs from https://dashboard.emailjs.com ——— */
   var EMAILJS_CONFIG = {
@@ -24,6 +29,45 @@
   var WD_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
   var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  /** Escape HTML-special characters before values are emailed (mitigates XSS in downstream templates). */
+  function sanitizeInput(str) {
+    if (str == null) return '';
+    var s = String(str);
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /** Same maxlength as contact form "Mensaje" (iletisim.html). */
+  var NOTE_MAX_CHARS = 500;
+
+  /** Mirror js/script.js contact textarea: collapse 3+ consecutive newlines to two. */
+  function normalizeNoteNewlines(text) {
+    return String(text).replace(/\n{3,}/g, '\n\n');
+  }
+
+  /**
+   * Allow letters (Latin extended), digits, whitespace, punctuation . , ; : ! ? ¡ ¿ -
+   * Strips symbols such as &lt; &gt; &amp; quotes, $, %, *, etc. (booking-specific).
+   */
+  function stripNoteDisallowed(str) {
+    return String(str).replace(
+      /[^\r\n\t \u0030-\u0039\u0041-\u005A\u0061-\u007A\u00C0-\u024F.,;:!?¡¿\-]/g,
+      ''
+    );
+  }
+
+  function prepareNoteForSubmit(raw) {
+    var s = (raw || '').trim();
+    s = normalizeNoteNewlines(s);
+    s = stripNoteDisallowed(s);
+    if (s.length > NOTE_MAX_CHARS) s = s.slice(0, NOTE_MAX_CHARS);
+    return sanitizeInput(s);
+  }
 
   /** One-hour slots 09:00–17:00 (labels for UI) */
   function getTimeSlotDefs() {
@@ -112,14 +156,26 @@
                 '</div>' +
                 '<div class="sched-cal-field">' +
                   '<label class="sched-cal-label" for="sched-cal-note">Nota</label>' +
-                  '<textarea class="sched-cal-textarea" id="sched-cal-note" name="user_note" rows="3" maxlength="800" placeholder="Motivo de consulta (opcional)"></textarea>' +
+                  '<textarea class="sched-cal-textarea" id="sched-cal-note" name="user_note" rows="3" maxlength="500" placeholder="Motivo de consulta (opcional)"></textarea>' +
+                  '<div id="sched-cal-note-counter" class="sched-cal-char-counter" aria-live="polite">0 / 500</div>' +
                 '</div>' +
+                '<div class="sched-cal-field sched-cal-field--consent">' +
+                  '<input type="checkbox" id="sched-cal-consent" name="privacy_consent" class="sched-cal-consent__input" value="1" autocomplete="off">' +
+                  '<label class="sched-cal-consent__label" for="sched-cal-consent">' +
+                    'He leído y acepto la <a href="privacy-policy.html" class="sched-cal-consent__link">política de privacidad</a>.' +
+                  '</label>' +
+                '</div>' +
+                '<p class="sched-cal-security-strip" role="note">' +
+                  '<span class="sched-cal-security-strip__icon" aria-hidden="true">🔒</span>' +
+                  '<span class="sched-cal-security-strip__text">Tus datos están seguros y se transmiten cifrados.</span>' +
+                '</p>' +
+                '<p id="sched-cal-system-msg" class="sched-cal-system-msg" hidden role="alert"></p>' +
                 '<button type="submit" class="sched-cal-submit" id="sched-cal-submit">Reservar cita</button>' +
               '</form>' +
             '</div>' +
             '<div id="sched-cal-success" class="sched-cal-feedback sched-cal-feedback--success" hidden>' +
               '<span class="sched-cal-feedback__icon" aria-hidden="true">✓</span>' +
-              '<p class="sched-cal-feedback__text">Gracias. Hemos recibido tu solicitud. Te contactaremos pronto para confirmar la cita.</p>' +
+              '<p class="sched-cal-feedback__text">Gracias. Hemos recibido tu solicitud. Recibirás un correo electrónico de confirmación cuando procesemos tu petición. También te contactaremos pronto para confirmar la cita.</p>' +
               '<button type="button" class="sched-cal-btn-secondary" id="sched-cal-success-close">Cerrar</button>' +
             '</div>' +
             '<div id="sched-cal-error" class="sched-cal-feedback sched-cal-feedback--error" hidden>' +
@@ -180,19 +236,45 @@
           var m = viewMonth;
           var d = dayNum;
           var key = y + '-' + pad2(m + 1) + '-' + pad2(d);
+          var cellDate = new Date(y, m, d);
+          var dow = cellDate.getDay();
+          var isWeekend = dow === 0 || dow === 6;
+          var todayStart = new Date(todayY, todayM, todayD);
+          var cellStart = new Date(y, m, d);
+          var isPast = cellStart.getTime() < todayStart.getTime();
+          var isDisabled = isPast || isWeekend;
+
           cell.textContent = String(d);
-          cell.setAttribute('aria-label', d + ' de ' + MONTH_NAMES[m] + ' de ' + y);
-          cell.dataset.dateKey = key;
 
-          if (y === todayY && m === todayM && d === todayD) {
-            cell.classList.add('sched-cal-day--today');
-          }
-
-          if (selectedDateKey === key) {
-            cell.classList.add('sched-cal-day--selected');
-            cell.setAttribute('aria-pressed', 'true');
+          if (isDisabled) {
+            cell.classList.add('sched-cal-day--disabled');
+            cell.disabled = true;
+            cell.removeAttribute('data-date-key');
+            cell.setAttribute('aria-disabled', 'true');
+            cell.setAttribute(
+              'aria-label',
+              d + ' de ' + MONTH_NAMES[m] + ' de ' + y + ', no disponible'
+            );
           } else {
-            cell.setAttribute('aria-pressed', 'false');
+            cell.dataset.dateKey = key;
+            cell.setAttribute('aria-disabled', 'false');
+
+            var labelSuffix = '';
+            if (y === todayY && m === todayM && d === todayD) {
+              cell.classList.add('sched-cal-day--today');
+              labelSuffix = ', hoy';
+            }
+            cell.setAttribute(
+              'aria-label',
+              d + ' de ' + MONTH_NAMES[m] + ' de ' + y + labelSuffix
+            );
+
+            if (selectedDateKey === key) {
+              cell.classList.add('sched-cal-day--selected');
+              cell.setAttribute('aria-pressed', 'true');
+            } else {
+              cell.setAttribute('aria-pressed', 'false');
+            }
           }
 
           dayNum++;
@@ -256,14 +338,44 @@
     err.hidden = true;
   }
 
+  function hideSystemMsg(refs) {
+    if (!refs.systemMsg) return;
+    refs.systemMsg.hidden = true;
+    refs.systemMsg.textContent = '';
+  }
+
+  function showSystemMsg(refs, msg) {
+    if (!refs.systemMsg) return;
+    refs.systemMsg.textContent = msg;
+    refs.systemMsg.hidden = false;
+  }
+
+  function updateNoteCounter(refs) {
+    if (!refs.noteCounter || !refs.inputNote) return;
+    var len = refs.inputNote.value.length;
+    var max = NOTE_MAX_CHARS;
+    refs.noteCounter.textContent = len + ' / ' + max;
+    refs.noteCounter.classList.toggle('sched-cal-char-counter--warning', len >= max * 0.9);
+    refs.noteCounter.classList.toggle('sched-cal-char-counter--danger', len >= max);
+  }
+
   function clearFormFields(refs) {
     refs.form.reset();
+    hideSystemMsg(refs);
     refs.form.querySelectorAll('.sched-cal-field-error').forEach(function (el) {
       el.classList.remove('sched-cal-field-error');
     });
     refs.form.querySelectorAll('.sched-cal-input-msg').forEach(function (el) {
       el.remove();
     });
+    updateNoteCounter(refs);
+  }
+
+  function updateSubmitEnabled(refs) {
+    if (!refs.submitBtn) return;
+    var consentOk = refs.inputConsent && refs.inputConsent.checked;
+    refs.submitBtn.disabled = !consentOk;
+    refs.submitBtn.setAttribute('aria-disabled', consentOk ? 'false' : 'true');
   }
 
   function showSuccess(refs) {
@@ -315,6 +427,13 @@
       appendFieldMsg(emailEl, 'Introduce un correo válido.');
     }
 
+    var consentEl = refs.inputConsent;
+    if (consentEl && !consentEl.checked) {
+      valid = false;
+      consentEl.closest('.sched-cal-field').classList.add('sched-cal-field-error');
+      appendFieldMsg(consentEl, 'Debes aceptar la política de privacidad para continuar.');
+    }
+
     return valid;
   }
 
@@ -333,7 +452,32 @@
     );
   }
 
-  function sendWithEmailJS(refs, templateParams) {
+  /**
+   * Returns a reCAPTCHA v3 token, or a sentinel when the site key is still a placeholder.
+   * Rejects if the library failed to load or execute (caller shows a friendly message).
+   */
+  function getRecaptchaToken() {
+    return new Promise(function (resolve, reject) {
+      if (!RECAPTCHA_SITE_KEY || RECAPTCHA_SITE_KEY.indexOf('YOUR_') === 0) {
+        resolve('pending_recaptcha_configuration');
+        return;
+      }
+      if (typeof grecaptcha === 'undefined' || typeof grecaptcha.ready !== 'function') {
+        reject(new Error('recaptcha_unavailable'));
+        return;
+      }
+      grecaptcha.ready(function () {
+        grecaptcha
+          .execute(RECAPTCHA_SITE_KEY, { action: 'booking_request' })
+          .then(resolve)
+          .catch(function () {
+            reject(new Error('recaptcha_execute_failed'));
+          });
+      });
+    });
+  }
+
+  function sendWithEmailJS(templateParams) {
     if (typeof emailjs === 'undefined' || !emailjs.send) {
       return Promise.reject(new Error('EmailJS no cargó'));
     }
@@ -393,7 +537,10 @@
       inputName: root.querySelector('#sched-cal-name'),
       inputEmail: root.querySelector('#sched-cal-email'),
       inputPhone: root.querySelector('#sched-cal-phone'),
-      inputNote: root.querySelector('#sched-cal-note')
+      inputNote: root.querySelector('#sched-cal-note'),
+      noteCounter: root.querySelector('#sched-cal-note-counter'),
+      inputConsent: root.querySelector('#sched-cal-consent'),
+      systemMsg: root.querySelector('#sched-cal-system-msg')
     };
   }
 
@@ -455,7 +602,9 @@
     }
 
     refs.grid.addEventListener('click', function (ev) {
-      var btn = ev.target.closest('.sched-cal-day:not(.sched-cal-day--empty)');
+      var btn = ev.target.closest(
+        '.sched-cal-day:not(.sched-cal-day--empty):not(.sched-cal-day--disabled)'
+      );
       if (!btn || !refs.grid.contains(btn)) return;
       var key = btn.dataset.dateKey;
       if (!key) return;
@@ -463,7 +612,9 @@
       selectedDateKey = key;
       selectedSlotId = null;
 
-      refs.grid.querySelectorAll('.sched-cal-day:not(.sched-cal-day--empty)').forEach(function (el) {
+      refs.grid
+        .querySelectorAll('.sched-cal-day:not(.sched-cal-day--empty):not(.sched-cal-day--disabled)')
+        .forEach(function (el) {
         el.classList.remove('sched-cal-day--selected');
         el.setAttribute('aria-pressed', 'false');
       });
@@ -503,42 +654,97 @@
 
     refs.form.addEventListener('submit', function (e) {
       e.preventDefault();
+      hideSystemMsg(refs);
       if (!validateForm(refs)) return;
-
-      var slotInfo = getSlotById(selectedSlotId);
-      var templateParams = {
-        selected_date: formatDateSpanish(selectedDateKey),
-        selected_time: slotInfo ? slotInfo.compact : '',
-        user_name: (refs.inputName.value || '').trim(),
-        user_email: (refs.inputEmail.value || '').trim(),
-        user_phone: (refs.inputPhone.value || '').trim(),
-        user_note: (refs.inputNote.value || '').trim()
-      };
 
       refs.submitBtn.disabled = true;
 
-      var restoreBtn = function () {
+      var restoreSubmitState = function () {
         setTimeout(function () {
-          refs.submitBtn.disabled = false;
+          updateSubmitEnabled(refs);
         }, 1800);
       };
 
-      sendWithEmailJS(refs, templateParams).then(
-        function () {
-          restoreBtn();
-          clearFormFields(refs);
-          showSuccess(refs);
-        },
-        function () {
-          restoreBtn();
-          showErrorPanel(refs);
-        }
-      );
+      getRecaptchaToken()
+        .then(function (token) {
+          var slotInfo = getSlotById(selectedSlotId);
+          var templateParams = {
+            selected_date: formatDateSpanish(selectedDateKey),
+            selected_time: slotInfo ? slotInfo.compact : '',
+            user_name: sanitizeInput((refs.inputName.value || '').trim()),
+            user_email: sanitizeInput((refs.inputEmail.value || '').trim()),
+            user_phone: sanitizeInput((refs.inputPhone.value || '').trim()),
+            user_note: prepareNoteForSubmit(refs.inputNote.value),
+            recaptcha_token: token
+          };
+          return sendWithEmailJS(templateParams);
+        })
+        .then(
+          function () {
+            restoreSubmitState();
+            clearFormFields(refs);
+            updateSubmitEnabled(refs);
+            showSuccess(refs);
+          },
+          function (err) {
+            restoreSubmitState();
+            var code = err && err.message;
+            if (code === 'recaptcha_unavailable' || code === 'recaptcha_execute_failed') {
+              showSystemMsg(
+                refs,
+                'No se pudo completar la verificación de seguridad. Por favor, recarga la página e inténtalo de nuevo.'
+              );
+              updateSubmitEnabled(refs);
+              return;
+            }
+            showErrorPanel(refs);
+          }
+        );
     });
+
+    if (refs.inputConsent) {
+      refs.inputConsent.addEventListener('change', function () {
+        hideSystemMsg(refs);
+        updateSubmitEnabled(refs);
+      });
+    }
+
+    if (refs.inputNote) {
+      function processNoteField() {
+        var el = refs.inputNote;
+        var v = el.value;
+        v = normalizeNoteNewlines(v);
+        var stripped = stripNoteDisallowed(v);
+        if (stripped !== v) el.value = stripped;
+        if (el.value.length > NOTE_MAX_CHARS) {
+          el.value = el.value.slice(0, NOTE_MAX_CHARS);
+        }
+        updateNoteCounter(refs);
+      }
+      refs.inputNote.addEventListener('input', processNoteField);
+      refs.inputNote.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var pasted = (e.clipboardData || window.clipboardData).getData('text');
+        var el = refs.inputNote;
+        var start = el.selectionStart;
+        var end = el.selectionEnd;
+        var cur = el.value;
+        var merged = cur.substring(0, start) + pasted + cur.substring(end);
+        merged = normalizeNoteNewlines(merged);
+        merged = stripNoteDisallowed(merged);
+        if (merged.length > NOTE_MAX_CHARS) merged = merged.slice(0, NOTE_MAX_CHARS);
+        el.value = merged;
+        var pos = Math.min(start + pasted.length, merged.length);
+        el.setSelectionRange(pos, pos);
+        updateNoteCounter(refs);
+      });
+      updateNoteCounter(refs);
+    }
 
     refs.btnErrorRetry.addEventListener('click', function () {
       showFormAgain(refs);
-      refs.submitBtn.disabled = false;
+      hideSystemMsg(refs);
+      updateSubmitEnabled(refs);
     });
 
     refs.btnSuccessClose.addEventListener('click', function () {
@@ -559,6 +765,7 @@
       refs.successEl.hidden = true;
       refs.errorEl.hidden = true;
       updateBookingSection(refs, false);
+      updateSubmitEnabled(refs);
       openModal();
     }
 
@@ -584,7 +791,7 @@
         renderMonth(refs.grid, refs.monthLabel, viewYear, viewMonth, null);
         updateTimeSection(refs, null, null);
       }
-      refs.submitBtn.disabled = false;
+      updateSubmitEnabled(refs);
     }
 
     function closeModal() {
@@ -607,6 +814,8 @@
         b.setAttribute('aria-expanded', 'false');
       });
     });
+
+    updateSubmitEnabled(refs);
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && refs.root.classList.contains('is-open')) {
