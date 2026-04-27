@@ -124,6 +124,15 @@
     </section>
   </main>
 
+  <!-- Scheduling CTA (opens calendar modal — js/schedule-calendar.js) -->
+  <section class="sched-cta" aria-label="Consultar disponibilidad para cita">
+    <div class="sched-cta__inner container">
+      <div class="sched-cta__slot" id="reserva">
+        <button type="button" class="sched-cta__link sched-cta__trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="sched-calendar-dialog"><span class="sched-cta__icon" aria-hidden="true">📅</span><span class="sched-cta__label">Haz clic aquí para consultar la disponibilidad.</span></button>
+      </div>
+    </div>
+  </section>
+
  
       <!-- FOOTER - Koyu Mavi Tema, 3 Kolonlu, Profesyonel Hizalama -->
 <footer class="site-footer-elegant">
@@ -210,6 +219,8 @@
   </div>
 
 </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
   <script src="js/script.js" defer></script>
+  <script src="js/schedule-calendar.js" defer></script>
 </body>
 </html>
