@@ -4146,3 +4146,318 @@ button[type="submit"].loading::after {
   font-size: 0.8rem;
   color: #aaa;
 }
+
+/* ===================================================
+   ELEGANT FOOTER — site-footer-elegant
+   =================================================== */
+
+/* Wave transition */
+.sfe-wave-top {
+  display: block;
+  line-height: 0;
+  margin-bottom: -2px;
+  background: transparent;
+}
+
+.sfe-wave-top svg {
+  display: block;
+  width: 100%;
+  height: 60px;
+}
+
+.site-footer-elegant {
+  background: #0A0F2C;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'Inter', 'Poppins', sans-serif;
+  margin-top: 0;
+}
+
+/* Footer inner width — centred; symmetric side padding for equal edge gaps */
+.sfe-container {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1.25rem, 4vw, 2rem);
+  padding-right: clamp(1.25rem, 4vw, 2rem);
+}
+
+/* Top section — 3 equal-width columns, top-aligned */
+.sfe-top {
+  padding: 3.5rem 0 2.5rem;
+}
+
+.sfe-top .sfe-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* Equal flex columns + identical horizontal padding inside each column */
+.sfe-top .sfe-brand,
+.sfe-top .sfe-col {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  box-sizing: border-box;
+}
+
+/* Brand + content columns share the same flex alignment model */
+.sfe-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.4rem;
+}
+
+.sfe-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.sfe-brand-role {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #A78BFA;
+  margin: 0;
+  padding-top: 0;
+  line-height: 1.25;
+}
+
+.sfe-brand-name {
+  font-size: 1.45rem;
+  font-weight: 300;
+  line-height: 1.25;
+  color: #ffffff;
+  margin: 0.35rem 0 0.6rem;
+  letter-spacing: -0.01em;
+}
+
+.sfe-brand-tagline {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  font-style: italic;
+}
+
+/* Column titles — align with brand column start (same top edge, consistent rhythm) */
+.sfe-col-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #2F6F68;
+  margin: 0 0 1rem 0;
+  padding-top: 0;
+  line-height: 1.25;
+}
+
+/* Links list */
+.sfe-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sfe-links a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 300;
+  transition: color 0.2s ease;
+}
+
+.sfe-links a:hover {
+  color: #ffffff;
+}
+
+/* Info list */
+.sfe-links--info li {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+/* Contact list */
+.sfe-links--contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.sfe-links--contact a {
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.sfe-contact-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Social icons */
+.sfe-social {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1.2rem;
+}
+
+.sfe-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.sfe-social-link:hover {
+  border-color: #A78BFA;
+  color: #A78BFA;
+  background: rgba(167, 139, 250, 0.08);
+}
+
+/* Divider — same horizontal bounds as .sfe-container */
+.sfe-divider-wrap {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1.25rem, 4vw, 2rem);
+  padding-right: clamp(1.25rem, 4vw, 2rem);
+}
+
+.sfe-divider {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(47,111,104,0.5), rgba(167,139,250,0.5), rgba(47,111,104,0.5), transparent);
+}
+
+/* Subfooter */
+.sfe-bottom {
+  padding: 1.2rem 0;
+}
+
+.sfe-bottom-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sfe-copy {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.28);
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.sfe-dev-link {
+  color: rgba(167, 139, 250, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.sfe-dev-link:hover {
+  color: #A78BFA;
+}
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width: 1024px) {
+  .sfe-top .sfe-container {
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sfe-top .sfe-container {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: clamp(1.75rem, 5vw, 2.25rem);
+  }
+  .sfe-top .sfe-brand,
+  .sfe-top .sfe-col {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .sfe-container {
+    padding-left: clamp(1.25rem, 5vw, 2rem);
+    padding-right: clamp(1.25rem, 5vw, 2rem);
+  }
+  .sfe-divider-wrap {
+    padding-left: clamp(1.25rem, 5vw, 2rem);
+    padding-right: clamp(1.25rem, 5vw, 2rem);
+  }
+  .sfe-top {
+    padding: 2.75rem 0 2.25rem;
+  }
+  /* Stack order: brand → información → contacto; centered, readable */
+  .site-footer-elegant .sfe-brand,
+  .site-footer-elegant .sfe-col {
+    align-items: center;
+    text-align: center;
+  }
+  .site-footer-elegant .sfe-brand-name,
+  .site-footer-elegant .sfe-brand-tagline {
+    text-align: center;
+  }
+  .site-footer-elegant .sfe-links {
+    align-items: center;
+  }
+  .site-footer-elegant .sfe-links--info li,
+  .site-footer-elegant .sfe-links--contact li {
+    justify-content: center;
+    text-align: center;
+  }
+  .site-footer-elegant .sfe-links--contact a {
+    padding: 0.5rem 0.75rem;
+    margin: 0 -0.75rem;
+    border-radius: 6px;
+    -webkit-tap-highlight-color: rgba(167, 139, 250, 0.25);
+  }
+  .site-footer-elegant .sfe-social {
+    justify-content: center;
+    margin-top: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .sfe-top {
+    padding: 2.5rem 0 2rem;
+  }
+  .sfe-wave-top svg {
+    height: 40px;
+  }
+}
