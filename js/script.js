@@ -183,9 +183,53 @@
   /* ---------- FORMULARIO DE CONTACTO (ENVÍO vía Cloudflare Worker) ---------- */
   const EMAIL_WORKER_URL = 'https://emailjs-proxy.ercorumlueren.workers.dev';
 
+  /** Desde index (pricing): ?plan=individual | primera | bono4 */
+  const CONTACT_PLAN_LABELS = {
+    individual: 'Sesión individual — €85',
+    primera: 'Primera cita — €70',
+    bono4: 'Bono 4 sesiones — €320'
+  };
+
+  function initContactPricingFromUrl() {
+    const hiddenPlan = document.getElementById('selected_plan');
+    const banner = document.getElementById('contact-plan-banner');
+    const bannerValueEl = document.getElementById('contact-plan-banner-value');
+    const clearBtn = document.getElementById('contact-plan-banner-clear');
+    if (!hiddenPlan || !banner || !bannerValueEl) return;
+
+    function applyPlanFromQuery() {
+      var params = new URLSearchParams(window.location.search);
+      var slug = (params.get('plan') || '').trim().toLowerCase();
+      var label = CONTACT_PLAN_LABELS[slug];
+      if (label) {
+        hiddenPlan.value = label;
+        bannerValueEl.textContent = label;
+        banner.hidden = false;
+      } else {
+        hiddenPlan.value = '';
+        banner.hidden = true;
+      }
+    }
+
+    applyPlanFromQuery();
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        /** Sustituye la entrada actual del historial para evitar volver a Contacto con ?plan= obsoleto */
+        try {
+          window.location.replace('index.html#tarifas');
+        } catch (e) {
+          window.location.href = 'index.html#tarifas';
+        }
+      });
+    }
+  }
+
   function initContactForm() {
     const form = document.getElementById('contactForm');
     if (!form) return;
+
+    initContactPricingFromUrl();
 
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn ? submitBtn.textContent : 'Enviar';
@@ -194,6 +238,7 @@
     const emailField = document.getElementById('email');
     const messageField = document.getElementById('message');
     const appointmentDateField = document.getElementById('appointment_date');
+    const selectedPlanField = document.getElementById('selected_plan');
     const formMessageEl = document.getElementById('form-message');
     const charCounter = document.getElementById('charCounter');
 
@@ -250,7 +295,8 @@
         from_name: nameField.value.trim(),
         reply_to: email,
         message: messageField.value.trim(),
-        selected_date: appointmentDateField ? appointmentDateField.value.trim() : ''
+        selected_date: appointmentDateField ? appointmentDateField.value.trim() : '',
+        selected_plan: selectedPlanField ? selectedPlanField.value.trim() : ''
       };
 
       try {
@@ -270,6 +316,16 @@
           form.reset();
           if (charCounter) charCounter.textContent = '0 / 500';
           if (appointmentDateField) appointmentDateField.value = '';
+          if (selectedPlanField) selectedPlanField.value = '';
+          const planBanner = document.getElementById('contact-plan-banner');
+          if (planBanner) planBanner.hidden = true;
+          try {
+            if (window.location.search) {
+              var u2 = new URL(window.location.href);
+              u2.search = '';
+              window.history.replaceState({}, '', u2.pathname + u2.hash);
+            }
+          } catch (e) { /* ignore */ }
           if (typeof window.datePicker !== 'undefined' && window.datePicker && typeof window.datePicker.clear === 'function') {
             window.datePicker.clear();
           }

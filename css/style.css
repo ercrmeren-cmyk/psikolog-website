@@ -755,6 +755,80 @@ p {
   font-size: 0.95rem;
 }
 
+.contact-fee-disclaimer {
+  margin: 0 0 1.25rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #6b7c87;
+  background: rgba(245, 248, 250, 0.9);
+  border-radius: 12px;
+  border-left: 3px solid rgba(111, 163, 210, 0.45);
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contact-plan-banner {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(111, 163, 210, 0.12) 0%, rgba(111, 163, 210, 0.06) 100%);
+  border: 1px solid rgba(111, 163, 210, 0.28);
+}
+
+.contact-plan-banner__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  justify-content: center;
+  text-align: center;
+}
+
+.contact-plan-banner__label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #5a7a8f;
+  font-weight: 600;
+}
+
+.contact-plan-banner__value {
+  flex: 1 1 auto;
+  min-width: 12rem;
+  color: #2c5a7a;
+  font-size: 1.05rem;
+}
+
+.contact-plan-banner__clear {
+  margin-left: auto;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: #2c5a7a;
+  background: #fff;
+  border: 1px solid rgba(44, 90, 122, 0.35);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.contact-plan-banner__clear:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #6FA3D2;
+}
+
+@media (max-width: 520px) {
+  .contact-plan-banner__inner {
+    flex-direction: column;
+  }
+  .contact-plan-banner__clear {
+    margin-left: 0;
+  }
+}
+
 .contact-quick {
   margin-top: 2rem;
   padding-top: 1.5rem;

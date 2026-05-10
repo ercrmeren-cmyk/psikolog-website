@@ -1,0 +1,7 @@
+# Örnek Wrangler yapılandırması — anahtarlar asla bu dosyada olmamalı.
+# name = "emailjs-proxy"
+# main = "worker.js"
+# compatibility_date = "2024-01-01"
+#
+# Gizli / ortam değişkenleri: wrangler secret put veya Cloudflare Dashboard → Variables and Secrets
+# İsimler worker.js içindeki env.* ile aynı olmalıdır.

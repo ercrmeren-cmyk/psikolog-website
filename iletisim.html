@@ -70,8 +70,21 @@
             <p>Te responderé lo antes posible.</p>
           </div>
 
+          <p class="contact-fee-disclaimer" role="note">
+            En este paso no se realiza ningún cobro. La tarifa y la forma de pago se concretarán y se abonarán tras la sesión.
+          </p>
+
+          <div id="contact-plan-banner" class="contact-plan-banner" hidden>
+            <div class="contact-plan-banner__inner">
+              <span class="contact-plan-banner__label">Tarifa elegida</span>
+              <strong class="contact-plan-banner__value" id="contact-plan-banner-value"></strong>
+              <button type="button" class="contact-plan-banner__clear" id="contact-plan-banner-clear" title="Elegir otra tarifa" aria-label="Ir a inicio para elegir otra tarifa">Cambiar</button>
+            </div>
+          </div>
+
           <form id="contactForm" action="#" method="POST" novalidate>
             <input type="hidden" id="appointment_date" name="appointment_date" value="">
+            <input type="hidden" id="selected_plan" name="selected_plan" value="">
             <div class="form-group">
               <label for="name">Nombre y apellidos</label>
               <input type="text" id="name" name="name" maxlength="50" required>
