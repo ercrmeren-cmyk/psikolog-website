@@ -93,11 +93,7 @@
         </p>
         <ul>
           <li>
-            <strong>Servicio de correo transaccional (EmailJS):</strong> los datos del formulario se transmiten de forma cifrada (HTTPS/TLS) para la entrega del mensaje al buzón profesional configurado.
-          </li>
-          <li>
-            <strong>Google reCAPTCHA v3:</strong> puede procesarse información técnica limitada para distinguir interacciones humanas de automatizadas y proteger el formulario contra abuso.
-            Puede consultar la política de Google en sus propios términos legales.
+            <strong>Correo transaccional (EmailJS vía proxy Cloudflare Workers):</strong> los datos del formulario se envían de forma cifrada (HTTPS/TLS) a un proxy en la red de Cloudflare, que reenvía el mensaje al servicio de correo (EmailJS) hacia el buzón profesional. Las credenciales del servicio de correo no se exponen en el navegador.
           </li>
         </ul>
         <p>No vendemos ni cedemos sus datos a terceros para fines comerciales.</p>
@@ -232,8 +228,6 @@
 
 </footer>
 
-  <script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
   <script src="js/script.js" defer></script>
   <script src="js/schedule-calendar.js" defer></script>
 </body>

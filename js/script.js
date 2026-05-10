@@ -176,46 +176,29 @@
 
     textarea.addEventListener('input', handleInput);
     textarea.addEventListener('paste', handlePaste);
-    
-    // Validación extra al enviar el formulario: trim y mínimo 10 caracteres significativos
-    const form = document.getElementById('contactForm');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        let message = textarea.value;
-        message = message.trim();
-        message = normalizeNewlines(message);
-        textarea.value = message;
-        
-        const meaningful = countMeaningfulChars(message);
-        if (meaningful < 10) {
-          e.preventDefault();
-          showToast('El mensaje debe contener al menos 10 caracteres significativos (letras o números).', 'error', 4000);
-          return false;
-        }
-      });
-    }
-    
+
     handleInput(); // Inicializar contador
   }
 
-  /* ---------- FORMULARIO DE CONTACTO (ENVÍO) ---------- */
+  /* ---------- FORMULARIO DE CONTACTO (ENVÍO vía Cloudflare Worker) ---------- */
+  const EMAIL_WORKER_URL = 'https://emailjs-proxy.ercorumlueren.workers.dev';
+
   function initContactForm() {
     const form = document.getElementById('contactForm');
     if (!form) return;
-    
+
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn ? submitBtn.textContent : 'Enviar';
-    const FORMSPREE_URL = 'https://formspree.io/f/xxxxx'; // Reemplazar con URL real
 
     const nameField = document.getElementById('name');
     const emailField = document.getElementById('email');
     const messageField = document.getElementById('message');
+    const appointmentDateField = document.getElementById('appointment_date');
+    const formMessageEl = document.getElementById('form-message');
     const charCounter = document.getElementById('charCounter');
 
-    // Inicializar validación de textarea
     setupTextareaValidation();
 
-    // Contador de caracteres adicional (por si setupTextareaValidation no lo cubre)
     if (messageField && charCounter) {
       const updateCounter = () => {
         const len = messageField.value.length;
@@ -228,53 +211,77 @@
       updateCounter();
     }
 
-    form.addEventListener('submit', async function(e) {
+    function countMeaningfulChars(text) {
+      return String(text).replace(/[\s\n]/g, '').length;
+    }
+
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      
-      // Validación básica
-      if (!nameField.value.trim() || !emailField.value.trim() || !messageField.value.trim()) {
+
+      let msgRaw = messageField.value;
+      msgRaw = msgRaw.trim().replace(/\n{3,}/g, '\n\n');
+      messageField.value = msgRaw;
+
+      if (countMeaningfulChars(msgRaw) < 10) {
+        showToast('El mensaje debe contener al menos 10 caracteres significativos (letras o números).', 'error', 4000);
+        return;
+      }
+
+      if (!nameField.value.trim() || !emailField.value.trim() || !msgRaw) {
         showToast('Por favor, complete todos los campos.', 'error');
         return;
       }
-      
+
       const email = emailField.value.trim();
       if (!/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/.test(email)) {
         showToast('Por favor, ingrese un correo electrónico válido.', 'error');
         return;
       }
-      
+
+      if (formMessageEl) formMessageEl.innerHTML = '';
+
       if (submitBtn) {
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando...';
       }
-      
-      const formData = new FormData(form);
-      
+
+      const payload = {
+        from_name: nameField.value.trim(),
+        reply_to: email,
+        message: messageField.value.trim(),
+        selected_date: appointmentDateField ? appointmentDateField.value.trim() : ''
+      };
+
       try {
-        if (FORMSPREE_URL.includes('xxxxx')) {
-          // Modo prueba
-          console.log('Datos del formulario (prueba):', Object.fromEntries(formData));
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          showToast('¡Mensaje enviado con éxito!', 'success');
+        const response = await fetch(EMAIL_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.success) {
+          if (formMessageEl) {
+            formMessageEl.innerHTML =
+              '<p style="color:#15803d;font-weight:500;">¡Tu mensaje se ha enviado correctamente!</p>';
+          }
+          showToast('¡Mensaje enviado con éxito!', 'success', 6000);
           form.reset();
           if (charCounter) charCounter.textContent = '0 / 500';
-        } else {
-          const response = await fetch(FORMSPREE_URL, {
-            method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
-          });
-          if (response.ok) {
-            showToast('¡Mensaje enviado con éxito!', 'success', 6000);
-            form.reset();
-            if (charCounter) charCounter.textContent = '0 / 500';
-          } else {
-            throw new Error('Error del servidor');
+          if (appointmentDateField) appointmentDateField.value = '';
+          if (typeof window.datePicker !== 'undefined' && window.datePicker && typeof window.datePicker.clear === 'function') {
+            window.datePicker.clear();
           }
+        } else {
+          throw new Error(result.error || 'Worker rejected');
         }
       } catch (error) {
         console.error('Error al enviar el formulario:', error);
+        if (formMessageEl) {
+          formMessageEl.innerHTML =
+            '<p style="color:#c2410c;font-weight:500;">No se pudo enviar el mensaje. Inténtelo de nuevo más tarde.</p>';
+        }
         showToast('Ocurrió un error al enviar. Inténtelo de nuevo más tarde.', 'error');
       } finally {
         if (submitBtn) {

@@ -2,23 +2,13 @@
  * Self-contained scheduling calendar modal (vanilla JS).
  * Opens from .sched-cta__trigger; modal appended once to document.body.
  *
- * EmailJS: replace placeholders in EMAILJS_CONFIG with your dashboard values.
- * Template variables: selected_date, selected_time, user_name, user_email, user_phone, user_note,
- *                    recaptcha_token. Keep RECAPTCHA_SITE_KEY in sync with the reCAPTCHA script URL on each page.
+ * Booking requests POST to Cloudflare Worker (EmailJS proxy); no client-side EmailJS/reCAPTCHA.
  * GDPR: users must accept the privacy policy checkbox before submit.
  */
 (function () {
   'use strict';
 
-  /** ——— Google reCAPTCHA v3 — replace YOUR_SITE_KEY with https://www.google.com/recaptcha/admin ——— */
-  var RECAPTCHA_SITE_KEY = 'YOUR_SITE_KEY';
-
-  /** ——— EmailJS: replace with your real IDs from https://dashboard.emailjs.com ——— */
-  var EMAILJS_CONFIG = {
-    publicKey: 'YOUR_PUBLIC_KEY',
-    serviceId: 'YOUR_SERVICE_ID',
-    templateId: 'YOUR_TEMPLATE_ID'
-  };
+  var EMAIL_WORKER_URL = 'https://emailjs-proxy.ercorumlueren.workers.dev';
 
   var DIALOG_ID = 'sched-calendar-dialog';
   var MONTH_NAMES = [
@@ -29,18 +19,6 @@
   var WD_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
   var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  /** Escape HTML-special characters before values are emailed (mitigates XSS in downstream templates). */
-  function sanitizeInput(str) {
-    if (str == null) return '';
-    var s = String(str);
-    return s
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
 
   /** Same maxlength as contact form "Mensaje" (iletisim.html). */
   var NOTE_MAX_CHARS = 500;
@@ -61,18 +39,41 @@
     );
   }
 
-  function prepareNoteForSubmit(raw) {
+  /** Plain text note for Worker JSON body (no HTML escaping). */
+  function plainNoteForWorker(raw) {
     var s = (raw || '').trim();
     s = normalizeNoteNewlines(s);
     s = stripNoteDisallowed(s);
     if (s.length > NOTE_MAX_CHARS) s = s.slice(0, NOTE_MAX_CHARS);
-    return sanitizeInput(s);
+    return s;
   }
 
-  /** One-hour slots 09:00–17:00 (labels for UI) */
-  function getTimeSlotDefs() {
+  function buildBookingWorkerMessage(refs, selectedDateKey, selectedSlotId) {
+    var slotInfo = getSlotById(selectedSlotId, selectedDateKey);
+    var lines = [];
+    lines.push('Reserva (calendario web)');
+    lines.push('Fecha: ' + formatDateSpanish(selectedDateKey));
+    if (slotInfo) lines.push('Franja: ' + slotInfo.label);
+    var phone = (refs.inputPhone.value || '').trim();
+    if (phone) lines.push('Teléfono: ' + phone);
+    var note = plainNoteForWorker(refs.inputNote.value);
+    if (note) lines.push('Nota: ' + note);
+    return lines.join('\n');
+  }
+
+  function selectedDateSummary(selectedDateKey, selectedSlotId) {
+    var slotInfo = getSlotById(selectedSlotId, selectedDateKey);
+    return formatDateSpanish(selectedDateKey) + (slotInfo ? ' — ' + slotInfo.label : '');
+  }
+
+  /**
+   * Opening hours (local weekday, Date#getDay: Sun=0 … Sat=6):
+   * Mon & Fri: 09:00–18:00 (one-hour slots, last 17:00–18:00). Thu: 09:00–12:00 only.
+   * Closed: Sat, Sun, Tue, Wed.
+   */
+  function buildOneHourSlots(startH, endHExclusive) {
     var slots = [];
-    for (var h = 9; h < 17; h++) {
+    for (var h = startH; h < endHExclusive; h++) {
       var start = pad2(h) + ':00';
       var end = pad2(h + 1) + ':00';
       slots.push({
@@ -84,8 +85,37 @@
     return slots;
   }
 
-  function getSlotById(id) {
-    var defs = getTimeSlotDefs();
+  function getDayOfWeekFromDateKey(dateKey) {
+    if (!dateKey || dateKey.indexOf('-') < 0) return null;
+    var parts = dateKey.split('-');
+    var y = parseInt(parts[0], 10);
+    var m = parseInt(parts[1], 10) - 1;
+    var d = parseInt(parts[2], 10);
+    if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
+    return new Date(y, m, d).getDay();
+  }
+
+  /** True if this weekday appears in the calendar as selectable (not past-only). */
+  function isOpenBookingDay(dow) {
+    if (dow === 1 || dow === 5) return true;
+    if (dow === 4) return true;
+    return false;
+  }
+
+  function getTimeSlotDefsForDayOfWeek(dow) {
+    if (dow === 4) {
+      return buildOneHourSlots(9, 12);
+    }
+    if (dow === 1 || dow === 5) {
+      return buildOneHourSlots(9, 18);
+    }
+    return [];
+  }
+
+  function getSlotById(id, dateKey) {
+    var dow = getDayOfWeekFromDateKey(dateKey);
+    if (dow == null) return null;
+    var defs = getTimeSlotDefsForDayOfWeek(dow);
     for (var i = 0; i < defs.length; i++) {
       if (defs[i].id === id) return defs[i];
     }
@@ -238,11 +268,10 @@
           var key = y + '-' + pad2(m + 1) + '-' + pad2(d);
           var cellDate = new Date(y, m, d);
           var dow = cellDate.getDay();
-          var isWeekend = dow === 0 || dow === 6;
           var todayStart = new Date(todayY, todayM, todayD);
           var cellStart = new Date(y, m, d);
           var isPast = cellStart.getTime() < todayStart.getTime();
-          var isDisabled = isPast || isWeekend;
+          var isDisabled = isPast || !isOpenBookingDay(dow);
 
           cell.textContent = String(d);
 
@@ -284,8 +313,9 @@
     }
   }
 
-  function renderTimeSlots(timeGrid, selectedSlotId) {
-    var defs = getTimeSlotDefs();
+  function renderTimeSlots(timeGrid, selectedSlotId, dateKey) {
+    var dow = getDayOfWeekFromDateKey(dateKey);
+    var defs = dow != null ? getTimeSlotDefsForDayOfWeek(dow) : [];
     timeGrid.innerHTML = '';
     defs.forEach(function (slot) {
       var btn = document.createElement('button');
@@ -315,7 +345,7 @@
     }
     wrap.hidden = false;
     wrap.setAttribute('aria-hidden', 'false');
-    renderTimeSlots(grid, selectedSlotId);
+    renderTimeSlots(grid, selectedSlotId, dateKey);
   }
 
   function updateBookingSection(refs, showFormAndSlot) {
@@ -444,66 +474,6 @@
     inputEl.parentNode.appendChild(p);
   }
 
-  function placeholdersStillDefault() {
-    return (
-      EMAILJS_CONFIG.publicKey.indexOf('YOUR_') === 0 ||
-      EMAILJS_CONFIG.serviceId.indexOf('YOUR_') === 0 ||
-      EMAILJS_CONFIG.templateId.indexOf('YOUR_') === 0
-    );
-  }
-
-  /**
-   * Returns a reCAPTCHA v3 token, or a sentinel when the site key is still a placeholder.
-   * Rejects if the library failed to load or execute (caller shows a friendly message).
-   */
-  function getRecaptchaToken() {
-    return new Promise(function (resolve, reject) {
-      if (!RECAPTCHA_SITE_KEY || RECAPTCHA_SITE_KEY.indexOf('YOUR_') === 0) {
-        resolve('pending_recaptcha_configuration');
-        return;
-      }
-      if (typeof grecaptcha === 'undefined' || typeof grecaptcha.ready !== 'function') {
-        reject(new Error('recaptcha_unavailable'));
-        return;
-      }
-      grecaptcha.ready(function () {
-        grecaptcha
-          .execute(RECAPTCHA_SITE_KEY, { action: 'booking_request' })
-          .then(resolve)
-          .catch(function () {
-            reject(new Error('recaptcha_execute_failed'));
-          });
-      });
-    });
-  }
-
-  function sendWithEmailJS(templateParams) {
-    if (typeof emailjs === 'undefined' || !emailjs.send) {
-      return Promise.reject(new Error('EmailJS no cargó'));
-    }
-
-    if (placeholdersStillDefault()) {
-      return Promise.reject(new Error('Configura EmailJS en EMAILJS_CONFIG'));
-    }
-
-    /** @emailjs/browser v4: init(publicKey), then send(serviceId, templateId, params) — no 4th arg */
-    if (typeof emailjs.init === 'function') {
-      try {
-        emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
-      } catch (e1) {
-        try {
-          emailjs.init(EMAILJS_CONFIG.publicKey);
-        } catch (e2) { /* ignore */ }
-      }
-    }
-
-    return emailjs.send(
-      EMAILJS_CONFIG.serviceId,
-      EMAILJS_CONFIG.templateId,
-      templateParams
-    );
-  }
-
   function ensureModal() {
     var existing = document.getElementById(DIALOG_ID);
     if (existing) return getModalRefs(existing.closest('.sched-cal-root'));
@@ -556,6 +526,16 @@
     var selectedDateKey = null;
     var selectedSlotId = null;
 
+    function syncAppointmentDateInput() {
+      var el = document.getElementById('appointment_date');
+      if (!el) return;
+      if (!selectedDateKey || !selectedSlotId) {
+        el.value = '';
+        return;
+      }
+      el.value = selectedDateSummary(selectedDateKey, selectedSlotId);
+    }
+
     function refreshCalendar() {
       renderMonth(refs.grid, refs.monthLabel, viewYear, viewMonth, selectedDateKey);
       updateTimeSection(refs, selectedDateKey, selectedSlotId);
@@ -563,6 +543,7 @@
         updateBookingSection(refs, false);
         clearFormFields(refs);
       }
+      syncAppointmentDateInput();
     }
 
     function openModal() {
@@ -632,6 +613,8 @@
         el.classList.remove('sched-cal-time-slot--selected');
         el.setAttribute('aria-pressed', 'false');
       });
+
+      syncAppointmentDateInput();
     });
 
     refs.timeGrid.addEventListener('click', function (ev) {
@@ -650,6 +633,8 @@
       showFormAgain(refs);
       refs.successEl.hidden = true;
       refs.errorEl.hidden = true;
+
+      syncAppointmentDateInput();
     });
 
     refs.form.addEventListener('submit', function (e) {
@@ -665,41 +650,40 @@
         }, 1800);
       };
 
-      getRecaptchaToken()
-        .then(function (token) {
-          var slotInfo = getSlotById(selectedSlotId);
-          var templateParams = {
-            selected_date: formatDateSpanish(selectedDateKey),
-            selected_time: slotInfo ? slotInfo.compact : '',
-            user_name: sanitizeInput((refs.inputName.value || '').trim()),
-            user_email: sanitizeInput((refs.inputEmail.value || '').trim()),
-            user_phone: sanitizeInput((refs.inputPhone.value || '').trim()),
-            user_note: prepareNoteForSubmit(refs.inputNote.value),
-            recaptcha_token: token
-          };
-          return sendWithEmailJS(templateParams);
+      var payload = {
+        from_name: (refs.inputName.value || '').trim(),
+        reply_to: (refs.inputEmail.value || '').trim(),
+        message: buildBookingWorkerMessage(refs, selectedDateKey, selectedSlotId),
+        selected_date: selectedDateSummary(selectedDateKey, selectedSlotId)
+      };
+
+      fetch(EMAIL_WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (response) {
+          return response.json().then(function (json) {
+            return { ok: response.ok, json: json };
+          });
         })
-        .then(
-          function () {
+        .then(function (res) {
+          if (res.ok && res.json && res.json.success) {
             restoreSubmitState();
             clearFormFields(refs);
             updateSubmitEnabled(refs);
+            var apEl = document.getElementById('appointment_date');
+            if (apEl) apEl.value = '';
             showSuccess(refs);
-          },
-          function (err) {
-            restoreSubmitState();
-            var code = err && err.message;
-            if (code === 'recaptcha_unavailable' || code === 'recaptcha_execute_failed') {
-              showSystemMsg(
-                refs,
-                'No se pudo completar la verificación de seguridad. Por favor, recarga la página e inténtalo de nuevo.'
-              );
-              updateSubmitEnabled(refs);
-              return;
-            }
-            showErrorPanel(refs);
+          } else {
+            throw new Error('worker_failed');
           }
-        );
+        })
+        .catch(function () {
+          restoreSubmitState();
+          updateSubmitEnabled(refs);
+          showErrorPanel(refs);
+        });
     });
 
     if (refs.inputConsent) {
@@ -792,6 +776,7 @@
         updateTimeSection(refs, null, null);
       }
       updateSubmitEnabled(refs);
+      syncAppointmentDateInput();
     }
 
     function closeModal() {
