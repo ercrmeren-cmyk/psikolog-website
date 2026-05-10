@@ -8,7 +8,12 @@
 (function () {
   'use strict';
 
-  var EMAIL_WORKER_URL = 'https://emailjs-proxy.ercorumlueren.workers.dev';
+  var EMAIL_WORKER_URL =
+    typeof window !== 'undefined' &&
+    window.PSIKO_CONFIG &&
+    window.PSIKO_CONFIG.EMAIL_WORKER_URL
+      ? window.PSIKO_CONFIG.EMAIL_WORKER_URL
+      : 'https://emailjs-proxy.ercorumlueren.workers.dev';
 
   var DIALOG_ID = 'sched-calendar-dialog';
   var MONTH_NAMES = [

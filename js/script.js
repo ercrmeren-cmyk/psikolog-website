@@ -15,28 +15,38 @@
 
     const toast = document.createElement('div');
     toast.className = `toast-message toast-${type}`;
-    
-    let icon = '💬';
-    if (type === 'success') icon = '✅';
-    else if (type === 'error') icon = '❌';
-    else if (type === 'info') icon = 'ℹ️';
 
-    toast.innerHTML = `
-      <span class="toast-icon">${icon}</span>
-      <span class="toast-content">${message}</span>
-      <button class="toast-close" aria-label="Cerrar">×</button>
-    `;
+    const iconEl = document.createElement('span');
+    iconEl.className = 'toast-icon';
+    iconEl.setAttribute('aria-hidden', 'true');
+    if (type === 'success') iconEl.textContent = '✅';
+    else if (type === 'error') iconEl.textContent = '❌';
+    else if (type === 'info') iconEl.textContent = 'ℹ️';
+    else iconEl.textContent = '💬';
+
+    const msgEl = document.createElement('span');
+    msgEl.className = 'toast-content';
+    msgEl.textContent = message != null ? String(message) : '';
+
+    const btnClose = document.createElement('button');
+    btnClose.className = 'toast-close';
+    btnClose.type = 'button';
+    btnClose.setAttribute('aria-label', 'Cerrar');
+    btnClose.textContent = '×';
+
+    toast.appendChild(iconEl);
+    toast.appendChild(msgEl);
+    toast.appendChild(btnClose);
     
     container.appendChild(toast);
-    
-    const closeBtn = toast.querySelector('.toast-close');
+
     const removeToast = () => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(30px)';
       setTimeout(() => toast.remove(), 300);
     };
     
-    closeBtn.addEventListener('click', removeToast);
+    btnClose.addEventListener('click', removeToast);
     if (duration > 0) setTimeout(removeToast, duration);
   }
 
@@ -181,7 +191,12 @@
   }
 
   /* ---------- FORMULARIO DE CONTACTO (ENVÍO vía Cloudflare Worker) ---------- */
-  const EMAIL_WORKER_URL = 'https://emailjs-proxy.ercorumlueren.workers.dev';
+  const EMAIL_WORKER_URL =
+    typeof window !== 'undefined' &&
+    window.PSIKO_CONFIG &&
+    window.PSIKO_CONFIG.EMAIL_WORKER_URL
+      ? window.PSIKO_CONFIG.EMAIL_WORKER_URL
+      : 'https://emailjs-proxy.ercorumlueren.workers.dev';
 
   /** Desde index (pricing): ?plan=individual | primera | bono4 */
   const CONTACT_PLAN_LABELS = {

@@ -1,20 +1,39 @@
 /**
- * Cloudflare Worker - EmailJS proxy (paste full file -> Save and deploy)
+ * Cloudflare Worker - EmailJS proxy (paste full file → Save and deploy).
  *
- * Preview tab sends GET -> you will see Method not allowed (expected). Real test: POST from site or curl.
- * Public Key errors come from EmailJS user_id, not template text.
+ * Optional env:
+ *   EXPOSE_EMAILJS_ERRORS = "1" → include upstream `detail` in JSON (debug only).
+ * Omit or any other value → generic `message` to client (reduces info leakage).
  */
 export default {
   async fetch(request, env) {
-    const PROXY_VERSION = '2-sequential';
-    const jsonHeaders = (cors) => ({
-      ...cors,
-      'Content-Type': 'application/json',
-      'X-Proxy-Version': PROXY_VERSION
-    });
+    var MAX_BODY_BYTES = 49152;
+    var PROXY_VERSION = '2-sequential-safe';
+    var exposeUpstream = env.EXPOSE_EMAILJS_ERRORS === '1';
 
-    const allowed = (env.ALLOWED_ORIGIN || '').trim().replace(/\/$/, '');
-    const corsHeaders = {
+    function jsonHeaders(cors) {
+      return {
+        ...cors,
+        'Content-Type': 'application/json',
+        'X-Proxy-Version': PROXY_VERSION
+      };
+    }
+
+    function sanitizeClient502(step, httpStatus, upstreamText) {
+      var body = {
+        success: false,
+        step: step,
+        status: httpStatus,
+        message: 'No se pudo completar el envío. Inténtelo más tarde o contacte por otro canal.'
+      };
+      if (exposeUpstream && upstreamText != null && String(upstreamText).length > 0) {
+        body.detail = String(upstreamText).slice(0, 2000);
+      }
+      return body;
+    }
+
+    var allowed = (env.ALLOWED_ORIGIN || '').trim().replace(/\/$/, '');
+    var corsHeaders = {
       'Access-Control-Allow-Origin': allowed || '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
@@ -35,7 +54,7 @@ export default {
       });
     }
 
-    const origin = request.headers.get('Origin');
+    var origin = request.headers.get('Origin');
     if (allowed && origin && origin !== allowed) {
       return new Response(JSON.stringify({ success: false, error: 'Forbidden origin' }), {
         status: 403,
@@ -43,9 +62,18 @@ export default {
       });
     }
 
-    let formData;
+    var buf = await request.arrayBuffer();
+    if (buf.byteLength > MAX_BODY_BYTES) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Payload too large', maxBytes: MAX_BODY_BYTES }),
+        { status: 413, headers: jsonHeaders(corsHeaders) }
+      );
+    }
+
+    var formData;
     try {
-      formData = await request.json();
+      var text = new TextDecoder().decode(buf);
+      formData = JSON.parse(text);
     } catch (_e) {
       return new Response(JSON.stringify({ success: false, error: 'Invalid JSON' }), {
         status: 400,
@@ -53,9 +81,6 @@ export default {
       });
     }
 
-    /**
-     * Public key: tırnak / fazla boşluk kırp; EmailJS dashboard’dan TEK parça kopyalanmalı.
-     */
     function normalizePublicKey(raw) {
       if (raw == null) return '';
       var s = String(raw).trim();
@@ -65,10 +90,10 @@ export default {
       return s;
     }
 
-    const pub = normalizePublicKey(env.EMAILJS_PUBLIC_KEY);
-    const svc = (env.EMAILJS_SERVICE_ID || '').trim();
-    const adminTpl = (env.EMAILJS_ADMIN_TEMPLATE_ID || '').trim();
-    const autoTpl = (env.EMAILJS_AUTOREPLY_TEMPLATE_ID || '').trim();
+    var pub = normalizePublicKey(env.EMAILJS_PUBLIC_KEY);
+    var svc = (env.EMAILJS_SERVICE_ID || '').trim();
+    var adminTpl = (env.EMAILJS_ADMIN_TEMPLATE_ID || '').trim();
+    var autoTpl = (env.EMAILJS_AUTOREPLY_TEMPLATE_ID || '').trim();
 
     if (!pub || !svc || !adminTpl || !autoTpl) {
       return new Response(
@@ -91,10 +116,6 @@ export default {
       );
     }
 
-    /**
-     * Admin: from_name, reply_to, message, selected_date, current_date
-     * Auto-Reply şablonunda "To" = {{email}} → reply_to ve user_email ile doldur
-     */
     function buildTemplateParams(body) {
       var p = {};
       if (body && typeof body === 'object') {
@@ -117,7 +138,7 @@ export default {
       return p;
     }
 
-    const templateParams = buildTemplateParams(formData);
+    var templateParams = buildTemplateParams(formData);
 
     function buildEmailJsBody(templateId) {
       var out = {
@@ -133,28 +154,23 @@ export default {
       return out;
     }
 
-    const emailjsUrl = 'https://api.emailjs.com/api/v1.0/email/send';
+    var emailjsUrl = 'https://api.emailjs.com/api/v1.0/email/send';
 
     try {
-      const adminRes = await fetch(emailjsUrl, {
+      var adminRes = await fetch(emailjsUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(buildEmailJsBody(adminTpl))
       });
-      const adminText = await adminRes.text();
+      var adminText = await adminRes.text();
 
       if (!adminRes.ok) {
-        var adminErr = {
-          success: false,
-          step: 'admin',
-          status: adminRes.status,
-          detail: adminText
-        };
-        if (adminText.indexOf('Public Key') !== -1) {
-          adminErr.hint =
+        var adminBody = sanitizeClient502('admin', adminRes.status, adminText);
+        if (exposeUpstream && adminText.indexOf('Public Key') !== -1) {
+          adminBody.hint =
             'Copy full Public Key from https://dashboard.emailjs.com/admin/account into EMAILJS_PUBLIC_KEY';
         }
-        return new Response(JSON.stringify(adminErr), {
+        return new Response(JSON.stringify(adminBody), {
           status: 502,
           headers: jsonHeaders(corsHeaders)
         });
@@ -164,24 +180,20 @@ export default {
         setTimeout(r, 1100);
       });
 
-      const autoRes = await fetch(emailjsUrl, {
+      var autoRes = await fetch(emailjsUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(buildEmailJsBody(autoTpl))
       });
-      const autoText = await autoRes.text();
+      var autoText = await autoRes.text();
 
       if (!autoRes.ok) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            step: 'autoreply',
-            status: autoRes.status,
-            detail: autoText,
-            note: 'Admin mail may have been sent; autoreply failed'
-          }),
-          { status: 502, headers: jsonHeaders(corsHeaders) }
-        );
+        var autoBody = sanitizeClient502('autoreply', autoRes.status, autoText);
+        autoBody.note = 'Admin mail may have been sent; autoreply failed';
+        return new Response(JSON.stringify(autoBody), {
+          status: 502,
+          headers: jsonHeaders(corsHeaders)
+        });
       }
 
       return new Response(JSON.stringify({ success: true }), {
@@ -189,10 +201,11 @@ export default {
         headers: jsonHeaders(corsHeaders)
       });
     } catch (err) {
-      return new Response(
-        JSON.stringify({ success: false, error: err && err.message ? err.message : 'Worker error' }),
-        { status: 500, headers: jsonHeaders(corsHeaders) }
-      );
+      var msg = exposeUpstream && err && err.message ? err.message : 'Error interno del servidor';
+      return new Response(JSON.stringify({ success: false, message: msg }), {
+        status: 500,
+        headers: jsonHeaders(corsHeaders)
+      });
     }
   }
 };

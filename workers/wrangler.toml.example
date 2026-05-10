@@ -1,7 +1,15 @@
-# Örnek Wrangler yapılandırması — anahtarlar asla bu dosyada olmamalı.
+# Ejemplo Wrangler — no pongas secretos en el repo.
 # name = "emailjs-proxy"
 # main = "worker.js"
-# compatibility_date = "2024-01-01"
+# compatibility_date = "2024-11-01"
 #
-# Gizli / ortam değişkenleri: wrangler secret put veya Cloudflare Dashboard → Variables and Secrets
-# İsimler worker.js içindeki env.* ile aynı olmalıdır.
+# Variables (Dashboard o wrangler secret):
+#   ALLOWED_ORIGIN
+#   EMAILJS_PUBLIC_KEY
+#   EMAILJS_PRIVATE_KEY
+#   EMAILJS_SERVICE_ID
+#   EMAILJS_ADMIN_TEMPLATE_ID
+#   EMAILJS_AUTOREPLY_TEMPLATE_ID
+#
+# Opcional debugging:
+#   EXPOSE_EMAILJS_ERRORS = "1"  → el JSON de error incluye "detail" de EmailJS (no usar en producción abierta).

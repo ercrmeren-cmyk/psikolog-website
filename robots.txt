@@ -1,0 +1,5 @@
+# Psicóloga clínica · sitio estático GitHub Pages
+User-agent: *
+Allow: /
+
+Sitemap: https://menteconmpsicologia.com/sitemap.xml
