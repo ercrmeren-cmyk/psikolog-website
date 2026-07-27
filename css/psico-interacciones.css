@@ -1,0 +1,452 @@
+/* ==========================================================================
+   PSICO-INTERACCIONES  (deneysel)
+   Tüm sınıflar "pxi-" ön ekiyle izole edilmiştir; mevcut stillerle çakışmaz.
+   Geri almak için: bu dosya + js/psico-interacciones.js silinir ve
+   index.html'deki iki <section> ile iki etiket kaldırılır.
+   ========================================================================== */
+
+.pxi-scope {
+  --pxi-navy: #0A0F2C;
+  --pxi-purple: #7c3aed;
+  --pxi-purple-light: #a78bfa;
+  --pxi-spruce: #2F6F68;
+  --pxi-tea: #BFD8B8;
+  --pxi-sky: #A9C7D0;
+  --pxi-rose: #b05a6a;
+  --pxi-ink: #4a4065;
+  --pxi-muted: #6b7280;
+}
+
+.pxi-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.pxi-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.42rem 0.95rem;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5b21b6;
+}
+
+.pxi-title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--pxi-navy);
+  text-wrap: balance;
+}
+
+.pxi-lead {
+  margin: 0 0 1rem;
+  max-width: 46ch;
+  font-size: clamp(1rem, 1.1vw, 1.08rem);
+  line-height: 1.75;
+  color: #5b6478;
+}
+
+.pxi-note {
+  margin: 0 0 1.75rem;
+  max-width: 44ch;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-style: italic;
+  color: var(--pxi-spruce);
+}
+
+/* --- ortak buton --- */
+.pxi-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.9rem 1.8rem;
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 45%, #a78bfa 100%);
+  box-shadow: 0 16px 32px -14px rgba(109, 40, 217, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: transform 0.35s cubic-bezier(0.22, 0.9, 0.28, 1), box-shadow 0.35s ease;
+}
+
+.pxi-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 42px -16px rgba(109, 40, 217, 0.68);
+}
+
+.pxi-btn:focus-visible {
+  outline: 3px solid rgba(124, 58, 237, 0.45);
+  outline-offset: 3px;
+}
+
+.pxi-btn--ghost {
+  color: #5b21b6;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(124, 58, 237, 0.32);
+  box-shadow: none;
+}
+
+.pxi-btn--ghost:hover {
+  background: #fff;
+  box-shadow: 0 18px 32px -18px rgba(76, 29, 149, 0.5);
+}
+
+/* ==========================================================================
+   1) RESPIRACIÓN GUIADA
+   ========================================================================== */
+.pxi-breathe {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(3.5rem, 7vw, 6rem) 0;
+  background:
+    radial-gradient(900px 520px at 82% 10%, rgba(191, 216, 184, 0.28), transparent 62%),
+    radial-gradient(760px 460px at 8% 88%, rgba(169, 199, 208, 0.26), transparent 64%),
+    linear-gradient(180deg, #ffffff 0%, #f7fbf8 55%, #f4f8fb 100%);
+}
+
+.pxi-breathe__grid {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+/* --- sahne --- */
+.pxi-breathe__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.pxi-orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(320px, 70vw);
+  aspect-ratio: 1;
+}
+
+.pxi-orb__ring,
+.pxi-orb__core {
+  position: absolute;
+  border-radius: 50%;
+  /* süre JS tarafından faza göre yazılır */
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.37, 0, 0.4, 1);
+  transition-duration: 900ms;
+}
+
+.pxi-orb__core {
+  inset: 22%;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #ddd0fb 42%, #a78bfa 100%);
+  box-shadow: 0 24px 50px -20px rgba(109, 40, 217, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.8);
+  transform: scale(0.72);
+}
+
+.pxi-orb__ring--1 {
+  inset: 12%;
+  border: 1px solid rgba(124, 58, 237, 0.28);
+  transform: scale(0.8);
+}
+
+.pxi-orb__ring--2 {
+  inset: 0;
+  border: 1px solid rgba(47, 111, 104, 0.22);
+  background: radial-gradient(circle, rgba(191, 216, 184, 0.16), transparent 68%);
+  transform: scale(0.86);
+}
+
+/* faz durumları */
+.pxi-orb[data-phase="inhala"] .pxi-orb__core,
+.pxi-orb[data-phase="sosten"] .pxi-orb__core { transform: scale(1); }
+.pxi-orb[data-phase="exhala"] .pxi-orb__core { transform: scale(0.72); }
+
+.pxi-orb[data-phase="inhala"] .pxi-orb__ring--1,
+.pxi-orb[data-phase="sosten"] .pxi-orb__ring--1 { transform: scale(1); }
+.pxi-orb[data-phase="exhala"] .pxi-orb__ring--1 { transform: scale(0.8); }
+
+.pxi-orb[data-phase="inhala"] .pxi-orb__ring--2,
+.pxi-orb[data-phase="sosten"] .pxi-orb__ring--2 { transform: scale(1.04); }
+.pxi-orb[data-phase="exhala"] .pxi-orb__ring--2 { transform: scale(0.86); }
+
+/* tutma fazında hafif nabız */
+.pxi-orb[data-phase="sosten"] .pxi-orb__ring--2 {
+  animation: pxiHold 1.6s ease-in-out infinite;
+}
+
+@keyframes pxiHold {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+.pxi-orb__label {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #46307d;
+  transition: opacity 0.5s ease;
+}
+
+.pxi-breathe__status {
+  min-height: 1.5em;
+  margin: 0;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pxi-muted);
+}
+
+/* bitiş mesajı */
+.pxi-breathe__outro {
+  max-width: 44ch;
+  margin: 1.5rem 0 0;
+  padding: 1.1rem 1.3rem;
+  border: 1px solid rgba(47, 111, 104, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--pxi-ink);
+}
+
+.pxi-breathe__outro p { margin: 0 0 0.9rem; }
+.pxi-breathe__outro p:last-child { margin: 0; }
+
+.pxi-breathe__outro[hidden] { display: none; }
+
+/* ==========================================================================
+   2) ¿TE RECONOCES EN ESTO?
+   ========================================================================== */
+.pxi-mirror {
+  position: relative;
+  padding: clamp(3.5rem, 7vw, 6rem) 0;
+  background: linear-gradient(180deg, #fbfaff 0%, #faf6f7 100%);
+}
+
+.pxi-mirror__head {
+  max-width: 620px;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.pxi-mirror__head .pxi-lead { margin-inline: auto; }
+
+.pxi-mirror__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.pxi-stmt {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  width: 100%;
+  height: 100%;
+  padding: 1.05rem 1.2rem;
+  border: 1px solid rgba(10, 15, 44, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: #43475c;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s cubic-bezier(0.22, 0.9, 0.28, 1),
+              box-shadow 0.3s ease, color 0.3s ease;
+}
+
+.pxi-stmt:hover {
+  transform: translateY(-2px);
+  border-color: rgba(124, 58, 237, 0.28);
+  box-shadow: 0 14px 26px -18px rgba(31, 20, 66, 0.45);
+}
+
+.pxi-stmt:focus-visible {
+  outline: 3px solid rgba(124, 58, 237, 0.4);
+  outline-offset: 2px;
+}
+
+.pxi-stmt__mark {
+  position: relative;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 0.1rem;
+  border: 1.5px solid rgba(124, 58, 237, 0.35);
+  border-radius: 7px;
+  background: #fff;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.pxi-stmt__mark::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0.4);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+
+.pxi-stmt[aria-pressed="true"] {
+  border-color: rgba(124, 58, 237, 0.4);
+  background: linear-gradient(135deg, rgba(243, 238, 255, 0.95), rgba(250, 245, 255, 0.95));
+  color: #35275c;
+}
+
+.pxi-stmt[aria-pressed="true"] .pxi-stmt__mark {
+  border-color: transparent;
+  background: linear-gradient(135deg, #7c3aed, #a78bfa);
+}
+
+.pxi-stmt[aria-pressed="true"] .pxi-stmt__mark::after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+/* --- ilerleme + sonuç --- */
+.pxi-mirror__meter {
+  max-width: 900px;
+  margin: 1.75rem auto 0;
+}
+
+.pxi-mirror__track {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(10, 15, 44, 0.07);
+  overflow: hidden;
+}
+
+/* Genişlik yerine scaleX: yüzdeli width mutlak konumlu elemanda hesaplanmıyordu,
+   ayrıca scaleX compositor'da çalıştığı için daha akıcı. */
+.pxi-mirror__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7c3aed, #a78bfa 60%, #BFD8B8);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+
+.pxi-mirror__count {
+  margin: 0.7rem 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--pxi-muted);
+}
+
+.pxi-mirror__result {
+  max-width: 720px;
+  margin: 1.75rem auto 0;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border: 1px solid rgba(176, 90, 106, 0.2);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 26px 50px -32px rgba(31, 20, 66, 0.4);
+  text-align: center;
+  opacity: 0;
+}
+
+/* transition yerine animation: element display:none'dan çıktığında
+   transition tetiklenmez, animation ise baştan oynar. */
+.pxi-mirror__result.is-visible {
+  animation: pxiResultIn 0.6s cubic-bezier(0.22, 0.9, 0.28, 1) both;
+}
+
+@keyframes pxiResultIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.pxi-mirror__result[hidden] { display: none; }
+
+.pxi-mirror__result-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  font-weight: 500;
+  color: var(--pxi-rose);
+}
+
+.pxi-mirror__result-text {
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--pxi-ink);
+}
+
+.pxi-mirror__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media screen and (max-width: 900px) {
+  .pxi-breathe__grid { grid-template-columns: 1fr; }
+  .pxi-breathe__intro { text-align: center; }
+  .pxi-breathe__intro .pxi-lead,
+  .pxi-breathe__intro .pxi-note { margin-inline: auto; }
+  .pxi-breathe__outro { margin-inline: auto; }
+}
+
+@media screen and (max-width: 700px) {
+  .pxi-mirror__list { grid-template-columns: 1fr; }
+}
+
+@media screen and (max-width: 480px) {
+  .pxi-stmt { padding: 0.9rem 1rem; font-size: 0.92rem; }
+  .pxi-btn { padding: 0.8rem 1.5rem; }
+}
+
+/* ==========================================================================
+   Hareket hassasiyeti — kaygı/vestibüler duyarlılığı olan ziyaretçiler için
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .pxi-orb__ring,
+  .pxi-orb__core {
+    transition-duration: 1ms !important;
+    animation: none !important;
+  }
+  .pxi-stmt,
+  .pxi-mirror__fill,
+  .pxi-btn {
+    transition-duration: 1ms !important;
+  }
+  .pxi-stmt:hover,
+  .pxi-btn:hover { transform: none; }
+  .pxi-mirror__result.is-visible { animation-duration: 1ms !important; }
+}
