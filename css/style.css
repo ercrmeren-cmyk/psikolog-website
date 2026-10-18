@@ -178,6 +178,117 @@ p {
   transition: var(--transition);
 }
 
+/* Language switcher (ES | EN) — sits after the menu inside .main-nav */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  flex-shrink: 0;
+  gap: 0.35rem;
+  margin-left: 1.6rem;
+  padding-left: 1.2rem;
+  border-left: 1px solid rgba(46, 46, 46, 0.15);
+  font-size: 0.9rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.lang-switch__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--text-soft);
+  transition: var(--transition);
+}
+
+.lang-switch__link span {
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.lang-switch__link:hover {
+  color: var(--blue-medium);
+}
+
+.lang-switch__link.is-active {
+  color: var(--blue-medium);
+  font-weight: 600;
+}
+
+.lang-switch__link.is-active span {
+  border-bottom-color: var(--blue-medium);
+}
+
+.lang-switch__link:focus-visible {
+  outline: 2px solid var(--blue-medium);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.lang-switch__sep {
+  color: rgba(46, 46, 46, 0.3);
+}
+
+/* Menu + language switcher need ~950px in one row; below that use the hamburger menu */
+@media (min-width: 961px) and (max-width: 1100px) {
+  .main-nav .nav-list {
+    gap: 1.6rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .main-nav {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-120%);
+    visibility: hidden;
+    transition: transform 0.4s ease, visibility 0s linear 0.4s;
+    z-index: 99;
+  }
+  .main-nav.active {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 0.4s ease;
+  }
+  .nav-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .mobile-menu-toggle {
+    display: flex;
+    position: relative;
+    z-index: 110;
+  }
+  /* one column at the right edge (as before); switcher centred under the links */
+  .main-nav {
+    display: grid;
+    justify-content: end;
+    justify-items: center;
+  }
+  .lang-switch {
+    margin: 18px 0 0;
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(46, 46, 46, 0.12);
+    gap: 0;
+    font-size: 1rem;
+  }
+  .lang-switch__link {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 6px;
+  }
+}
+
 /* ============================================ */
 /* HERO SLIDER                                 */
 /* ============================================ */
@@ -1570,7 +1681,7 @@ button[type="submit"].loading::after {
     grid-template-columns: 1fr;
   }
   .contact-modern-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
   }
   .contact-visual {
@@ -1612,32 +1723,6 @@ button[type="submit"].loading::after {
     font-size: 2.2rem;
   }
   
-  .main-nav {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    background: white;
-    padding: 24px;
-    box-shadow: var(--shadow-md);
-    transform: translateY(-120%);
-    transition: transform 0.4s ease;
-    z-index: 99;
-  }
-  .main-nav.active {
-    transform: translateY(0);
-  }
-  .nav-list {
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-  .mobile-menu-toggle {
-    display: flex;
-    position: relative;
-    z-index: 110;
-  }
-
   .btn,
   button[type="submit"] {
     width: 100%;
@@ -1681,6 +1766,12 @@ button[type="submit"].loading::after {
   }
 }
 
+@media (max-width: 360px) {
+  .contact-quick a {
+    font-size: 0.8rem;
+  }
+}
+
 @media (max-width: 640px) {
   .contact-form-wrapper {
     padding: 1.5rem;
@@ -1694,6 +1785,9 @@ button[type="submit"].loading::after {
   }
   .quick-icon {
     margin-bottom: 0.3rem;
+  }
+  .contact-quick a {
+    overflow-wrap: anywhere;
   }
   .toast-container {
     right: 16px;

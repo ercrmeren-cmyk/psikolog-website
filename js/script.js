@@ -4,6 +4,9 @@
   if (window.__psychSiteScriptInitialized) return;
   window.__psychSiteScriptInitialized = true;
 
+  const t = window.PSIKO_I18N ? window.PSIKO_I18N.t : key => key;
+  const PAGE_LANG = window.PSIKO_I18N ? window.PSIKO_I18N.lang : 'es';
+
   /* ---------- FUNCIONES AUXILIARES (TOAST) ---------- */
   function showToast(message, type = 'info', duration = 5000) {
     let container = document.querySelector('.toast-container');
@@ -31,7 +34,7 @@
     const btnClose = document.createElement('button');
     btnClose.className = 'toast-close';
     btnClose.type = 'button';
-    btnClose.setAttribute('aria-label', 'Cerrar');
+    btnClose.setAttribute('aria-label', t('toast.close'));
     btnClose.textContent = '×';
 
     toast.appendChild(iconEl);
@@ -53,13 +56,13 @@
   // Manejo global de errores (Español)
   window.onerror = function(message, source, lineno, colno, error) {
     console.error('Error detectado:', {message, source, lineno, colno});
-    showToast('Algo salió mal. Por favor, actualiza la página.', 'error', 6000);
+    showToast(t('error.generic'), 'error', 6000);
     return true;
   };
 
   window.addEventListener('unhandledrejection', function(event) {
     console.error('Promesa rechazada:', event.reason);
-    showToast('Error de conexión. Por favor, inténtalo de nuevo.', 'error', 5000);
+    showToast(t('error.connection'), 'error', 5000);
     event.preventDefault();
   });
 
@@ -154,7 +157,7 @@
 
       // Si el texto original tenía 3+ saltos, mostramos toast informativo
       if (/\n{3,}/.test(value)) {
-        showToast('No se permiten más de 2 líneas vacías consecutivas.', 'info', 2000);
+        showToast(t('form.tooManyBlankLines'), 'info', 2000);
       }
 
       // Actualizar contador de caracteres (si existe)
@@ -200,9 +203,9 @@
 
   /** Desde index (pricing): ?plan=individual | primera | bono4 */
   const CONTACT_PLAN_LABELS = {
-    individual: 'Sesión individual — €85',
-    primera: 'Primera cita — €70',
-    bono4: 'Bono 4 sesiones — €320'
+    individual: t('plan.individual'),
+    primera: t('plan.primera'),
+    bono4: t('plan.bono4')
   };
 
   function initContactPricingFromUrl() {
@@ -283,18 +286,18 @@
       messageField.value = msgRaw;
 
       if (countMeaningfulChars(msgRaw) < 10) {
-        showToast('El mensaje debe contener al menos 10 caracteres significativos (letras o números).', 'error', 4000);
+        showToast(t('form.minChars'), 'error', 4000);
         return;
       }
 
       if (!nameField.value.trim() || !emailField.value.trim() || !msgRaw) {
-        showToast('Por favor, complete todos los campos.', 'error');
+        showToast(t('form.required'), 'error');
         return;
       }
 
       const email = emailField.value.trim();
       if (!/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/.test(email)) {
-        showToast('Por favor, ingrese un correo electrónico válido.', 'error');
+        showToast(t('form.invalidEmail'), 'error');
         return;
       }
 
@@ -303,7 +306,7 @@
       if (submitBtn) {
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Enviando...';
+        submitBtn.textContent = t('form.sending');
       }
 
       const payload = {
@@ -311,7 +314,8 @@
         reply_to: email,
         message: messageField.value.trim(),
         selected_date: appointmentDateField ? appointmentDateField.value.trim() : '',
-        selected_plan: selectedPlanField ? selectedPlanField.value.trim() : ''
+        selected_plan: selectedPlanField ? selectedPlanField.value.trim() : '',
+        lang: PAGE_LANG
       };
 
       try {
@@ -325,9 +329,9 @@
         if (response.ok && result.success) {
           if (formMessageEl) {
             formMessageEl.innerHTML =
-              '<p style="color:#15803d;font-weight:500;">¡Tu mensaje se ha enviado correctamente!</p>';
+              '<p style="color:#15803d;font-weight:500;">' + t('form.sentInline') + '</p>';
           }
-          showToast('¡Mensaje enviado con éxito!', 'success', 6000);
+          showToast(t('form.sentToast'), 'success', 6000);
           form.reset();
           if (charCounter) charCounter.textContent = '0 / 500';
           if (appointmentDateField) appointmentDateField.value = '';
@@ -351,9 +355,9 @@
         console.error('Error al enviar el formulario:', error);
         if (formMessageEl) {
           formMessageEl.innerHTML =
-            '<p style="color:#c2410c;font-weight:500;">No se pudo enviar el mensaje. Inténtelo de nuevo más tarde.</p>';
+            '<p style="color:#c2410c;font-weight:500;">' + t('form.failInline') + '</p>';
         }
-        showToast('Ocurrió un error al enviar. Inténtelo de nuevo más tarde.', 'error');
+        showToast(t('form.failToast'), 'error');
       } finally {
         if (submitBtn) {
           submitBtn.classList.remove('loading');
@@ -427,7 +431,7 @@
       dot.type = 'button';
       dot.className = 'home-reviews-carousel__dot';
       dot.setAttribute('role', 'tab');
-      dot.setAttribute('aria-label', `Grupo ${i + 1} de ${total}`);
+      dot.setAttribute('aria-label', t('carousel.dot', { n: i + 1, total: total }));
       dot.addEventListener('click', () => setIndex(i));
       dotsWrap.appendChild(dot);
     });
@@ -521,10 +525,10 @@
       overlay.className = 'home-reviews-lightbox';
       overlay.setAttribute('role', 'dialog');
       overlay.setAttribute('aria-modal', 'true');
-      overlay.setAttribute('aria-label', 'Vista ampliada del testimonio');
+      overlay.setAttribute('aria-label', t('lightbox.label'));
 
       overlay.innerHTML =
-        '<button type="button" class="home-reviews-lightbox__backdrop" aria-label="Cerrar vista ampliada"></button>' +
+        '<button type="button" class="home-reviews-lightbox__backdrop" aria-label="' + t('lightbox.close') + '"></button>' +
         '<div class="home-reviews-lightbox__inner">' +
         '<img class="home-reviews-lightbox__img" src="" alt="" decoding="async" />' +
         '</div>';

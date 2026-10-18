@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/js/lang-boot.js"></script>
+  <script>
+    /* GitHub Pages serves this one file for every missing URL: /en/... shows the English version */
+    (function () {
+      var en = /^\/en(\/|$)/.test(location.pathname);
+      document.documentElement.lang = en ? 'en' : 'es';
+      if (en) document.title = 'Page not found (404) · Maria Dolores Barrios Nevado';
+    })();
+  </script>
   <title>Página no encontrada (404) · Maria Dolores Barrios Nevado</title>
   <meta name="description" content="La página que buscas no existe o ha cambiado de dirección.">
   <meta name="robots" content="noindex, follow">
@@ -10,8 +19,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
   <style>
+    html[lang="en"] [data-lang="es"],
+    html[lang="es"] [data-lang="en"] { display: none !important; }
     .page-404 { min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem 1.5rem 4rem; }
     .page-404__code { font-family: var(--font-headings, Poppins), sans-serif; font-size: clamp(4rem, 12vw, 6rem); font-weight: 600; color: #2c5a7a; line-height: 1; margin-bottom: 0.5rem; }
     .page-404__title { font-size: 1.35rem; font-weight: 500; color: #2d3748; margin-bottom: 0.75rem; }
@@ -21,31 +32,60 @@
     .page-404__btn--primary { background: linear-gradient(135deg, #6FA3D2, #2c5a7a); color: #fff; }
     .page-404__btn--secondary { border: 1px solid rgba(44, 90, 122, 0.35); color: #2c5a7a; background: #fff; }
     .page-404__btn:hover { opacity: 0.92; }
+    .page-404 .lang-switch { margin: 1.75rem 0 0; padding: 0; border: 0; }
+    .page-404 .lang-switch__link { min-width: 44px; min-height: 44px; }
   </style>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-container">
       <div class="logo logo-signature">
-        <a href="index.html"><span class="logo-subtitle">Psicóloga Clínica</span><span class="logo-name">Maria Dolores Barrios Nevado</span></a>
+        <a href="/" data-lang="es"><span class="logo-subtitle">Psicóloga Clínica</span><span class="logo-name">Maria Dolores Barrios Nevado</span></a>
+        <a href="/en/" data-lang="en"><span class="logo-subtitle">Clinical Psychologist</span><span class="logo-name">Maria Dolores Barrios Nevado</span></a>
       </div>
-      <nav class="main-nav" aria-label="Navegación principal">
+      <nav class="main-nav" aria-label="Navegación principal" data-lang="es">
         <ul class="nav-list">
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="iletisim.html">Contacto</a></li>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/iletisim.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <nav class="main-nav" aria-label="Main navigation" data-lang="en">
+        <ul class="nav-list">
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/iletisim.html">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main id="main-content">
-    <section class="page-404" aria-labelledby="404-heading">
+    <section class="page-404" data-lang="es" lang="es" aria-labelledby="404-heading-es">
       <p class="page-404__code" aria-hidden="true">404</p>
-      <h1 id="404-heading" class="page-404__title">Página no encontrada</h1>
+      <h1 id="404-heading-es" class="page-404__title">Página no encontrada</h1>
       <p class="page-404__text">Es posible que el enlace esté antiguo o la dirección sea incorrecta. Puedes volver al inicio o escribirme desde contacto.</p>
       <div class="page-404__actions">
-        <a href="index.html" class="page-404__btn page-404__btn--primary">Ir al inicio</a>
-        <a href="iletisim.html" class="page-404__btn page-404__btn--secondary">Contacto</a>
+        <a href="/" class="page-404__btn page-404__btn--primary">Ir al inicio</a>
+        <a href="/iletisim.html" class="page-404__btn page-404__btn--secondary">Contacto</a>
+      </div>
+      <div class="lang-switch" role="group" aria-label="Idioma">
+        <a href="/" class="lang-switch__link is-active" lang="es" hreflang="es" aria-label="Español" aria-current="true" data-lang-switch="es" data-lang-fixed><span>ES</span></a>
+        <span class="lang-switch__sep" aria-hidden="true">|</span>
+        <a href="/en/" class="lang-switch__link" lang="en" hreflang="en" aria-label="English" data-lang-switch="en" data-lang-fixed><span>EN</span></a>
+      </div>
+    </section>
+
+    <section class="page-404" data-lang="en" lang="en" aria-labelledby="404-heading-en">
+      <p class="page-404__code" aria-hidden="true">404</p>
+      <h1 id="404-heading-en" class="page-404__title">Page not found</h1>
+      <p class="page-404__text">The link may be out of date or the address may be incorrect. You can go back to the home page or get in touch through the contact page.</p>
+      <div class="page-404__actions">
+        <a href="/en/" class="page-404__btn page-404__btn--primary">Go to the home page</a>
+        <a href="/en/iletisim.html" class="page-404__btn page-404__btn--secondary">Contact</a>
+      </div>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a href="/" class="lang-switch__link" lang="es" hreflang="es" aria-label="Español" data-lang-switch="es" data-lang-fixed><span>ES</span></a>
+        <span class="lang-switch__sep" aria-hidden="true">|</span>
+        <a href="/en/" class="lang-switch__link is-active" lang="en" hreflang="en" aria-label="English" aria-current="true" data-lang-switch="en" data-lang-fixed><span>EN</span></a>
       </div>
     </section>
   </main>

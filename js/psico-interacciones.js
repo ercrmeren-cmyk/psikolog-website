@@ -13,6 +13,8 @@
   var reduceMotion = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  var t = window.PSIKO_I18N ? window.PSIKO_I18N.t : function (key) { return key; };
+
   /* =====================================================================
      1) RESPIRACIÓN GUIADA
      ===================================================================== */
@@ -29,9 +31,9 @@
     if (!orb || !label || !toggle) return;
 
     var PHASES = [
-      { key: 'inhala', label: 'Inhala', ms: 4000 },
-      { key: 'sosten', label: 'Sostén', ms: 4000 },
-      { key: 'exhala', label: 'Exhala', ms: 6000 }
+      { key: 'inhala', label: t('breathe.inhale'), ms: 4000 },
+      { key: 'sosten', label: t('breathe.hold'), ms: 4000 },
+      { key: 'exhala', label: t('breathe.exhale'), ms: 6000 }
     ];
     var TOTAL_CYCLES = 3;
 
@@ -50,7 +52,7 @@
       orb.dataset.phase = phase.key;
       label.textContent = phase.label;
       if (status) {
-        status.textContent = 'Ciclo ' + (cycle + 1) + ' de ' + TOTAL_CYCLES;
+        status.textContent = t('breathe.cycle', { n: cycle + 1, total: TOTAL_CYCLES });
       }
     }
 
@@ -77,7 +79,7 @@
       cycle = 0;
       phaseIndex = 0;
       if (outro) outro.hidden = true;
-      if (toggleLabel) toggleLabel.textContent = 'Detener';
+      if (toggleLabel) toggleLabel.textContent = t('breathe.stop');
       toggle.setAttribute('aria-pressed', 'true');
       step();
     }
@@ -87,17 +89,17 @@
       window.clearTimeout(timerId);
       timerId = null;
       orb.dataset.phase = 'exhala';
-      label.textContent = 'Respira';
-      if (toggleLabel) toggleLabel.textContent = 'Empezar';
+      label.textContent = t('breathe.idle');
+      if (toggleLabel) toggleLabel.textContent = t('breathe.start');
       toggle.setAttribute('aria-pressed', 'false');
       if (status && !silent) status.textContent = '';
     }
 
     function finish() {
       stop(true);
-      if (status) status.textContent = 'Ejercicio completado';
+      if (status) status.textContent = t('breathe.done');
       if (outro) outro.hidden = false;
-      if (toggleLabel) toggleLabel.textContent = 'Repetir';
+      if (toggleLabel) toggleLabel.textContent = t('breathe.repeat');
     }
 
     toggle.addEventListener('click', function () {
@@ -133,26 +135,10 @@
 
     // Eşik değerleri büyükten küçüğe taranır: seçilen sayıya uyan ilk mesaj alınır.
     var MESSAGES = [
-      {
-        min: 6,
-        title: 'Llevas demasiado tiempo en alerta',
-        text: 'Cuando tantas frases resuenan a la vez, no hablamos de un mal día: hablamos de un cuerpo y una mente que llevan mucho tiempo sosteniendo la tensión. Eso agota a cualquiera, y no tienes que seguir sosteniéndolo sola.'
-      },
-      {
-        min: 3,
-        title: 'Esto no es debilidad, es un patrón',
-        text: 'Lo que has marcado no dice nada malo de ti. Son formas que aprendiste para protegerte y que hoy te están pesando. Los patrones se pueden entender y se pueden cambiar; ese es justo el trabajo que hacemos en terapia.'
-      },
-      {
-        min: 1,
-        title: 'Aunque parezcan pocas, cuentan',
-        text: 'Puede que no sean muchas, pero si te acompañan casi todos los días, ya están ocupando espacio. No hace falta llegar al límite para pedir ayuda.'
-      },
-      {
-        min: 0,
-        title: 'Quizá no era por ti',
-        text: 'No has marcado ninguna, y está bien. Aun así, algo te ha traído hasta aquí. A veces merece la pena escuchar eso, aunque todavía no tenga nombre.'
-      }
+      { min: 6, title: t('mirror.high.title'), text: t('mirror.high.text') },
+      { min: 3, title: t('mirror.mid.title'), text: t('mirror.mid.text') },
+      { min: 1, title: t('mirror.low.title'), text: t('mirror.low.text') },
+      { min: 0, title: t('mirror.zero.title'), text: t('mirror.zero.text') }
     ];
 
     function selectedCount() {
@@ -176,8 +162,8 @@
       if (fill) fill.style.transform = 'scaleX(' + (n / total) + ')';
       if (count) {
         count.textContent = n === 0
-          ? 'Ninguna marcada todavía'
-          : 'Has marcado ' + n + ' de ' + total;
+          ? t('mirror.none')
+          : t('mirror.count', { n: n, total: total });
       }
 
       // Sonucu her tıklamada değil, kullanıcı durakladıktan sonra göster;

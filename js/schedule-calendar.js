@@ -15,13 +15,13 @@
       ? window.PSIKO_CONFIG.EMAIL_WORKER_URL
       : 'https://emailjs-proxy.ercorumlueren.workers.dev';
 
+  var t = window.PSIKO_I18N ? window.PSIKO_I18N.t : function (key) { return key; };
+  var PAGE_LANG = window.PSIKO_I18N ? window.PSIKO_I18N.lang : 'es';
+
   var DIALOG_ID = 'sched-calendar-dialog';
-  var MONTH_NAMES = [
-    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-  ];
-  /** Monday-first weekday labels (Lunes … Domingo) */
-  var WD_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  var MONTH_NAMES = t('cal.months');
+  /** Monday-first weekday labels */
+  var WD_LABELS = t('cal.weekdays');
 
   var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -56,19 +56,19 @@
   function buildBookingWorkerMessage(refs, selectedDateKey, selectedSlotId) {
     var slotInfo = getSlotById(selectedSlotId, selectedDateKey);
     var lines = [];
-    lines.push('Reserva (calendario web)');
-    lines.push('Fecha: ' + formatDateSpanish(selectedDateKey));
-    if (slotInfo) lines.push('Franja: ' + slotInfo.label);
+    lines.push(t('cal.mail.title'));
+    lines.push(t('cal.mail.date') + ': ' + formatDate(selectedDateKey));
+    if (slotInfo) lines.push(t('cal.mail.slot') + ': ' + slotInfo.label);
     var phone = (refs.inputPhone.value || '').trim();
-    if (phone) lines.push('Teléfono: ' + phone);
+    if (phone) lines.push(t('cal.mail.phone') + ': ' + phone);
     var note = plainNoteForWorker(refs.inputNote.value);
-    if (note) lines.push('Nota: ' + note);
+    if (note) lines.push(t('cal.mail.note') + ': ' + note);
     return lines.join('\n');
   }
 
   function selectedDateSummary(selectedDateKey, selectedSlotId) {
     var slotInfo = getSlotById(selectedSlotId, selectedDateKey);
-    return formatDateSpanish(selectedDateKey) + (slotInfo ? ' — ' + slotInfo.label : '');
+    return formatDate(selectedDateKey) + (slotInfo ? ' — ' + slotInfo.label : '');
   }
 
   /**
@@ -137,15 +137,20 @@
     return day === 0 ? 6 : day - 1;
   }
 
-  /** "2026-05-01" → "1 de mayo de 2026" */
-  function formatDateSpanish(dateKey) {
+  /** ES: "1 de mayo de 2026" · EN: "1 May 2026" */
+  function formatDateParts(d, m, y) {
+    return t('cal.date', { d: d, month: MONTH_NAMES[m], y: y });
+  }
+
+  /** "2026-05-01" → localized long date */
+  function formatDate(dateKey) {
     if (!dateKey || dateKey.indexOf('-') < 0) return '';
     var parts = dateKey.split('-');
     var y = parseInt(parts[0], 10);
     var m = parseInt(parts[1], 10) - 1;
     var d = parseInt(parts[2], 10);
     if (isNaN(y) || isNaN(m) || isNaN(d)) return dateKey;
-    return d + ' de ' + MONTH_NAMES[m] + ' de ' + y;
+    return formatDateParts(d, m, y);
   }
 
   function buildModalMarkup() {
@@ -156,67 +161,69 @@
       '<div class="sched-cal-modal" id="' + DIALOG_ID + '" role="dialog" aria-modal="true" aria-labelledby="sched-cal-title" aria-hidden="true" tabindex="-1">' +
         '<div class="sched-cal-modal__inner">' +
           '<div class="sched-cal-header">' +
-            '<h2 class="sched-cal-title" id="sched-cal-title">Disponibilidad</h2>' +
-            '<button type="button" class="sched-cal-close" data-sched-cal-close aria-label="Cerrar calendario">' +
+            '<h2 class="sched-cal-title" id="sched-cal-title">' + t('cal.title') + '</h2>' +
+            '<button type="button" class="sched-cal-close" data-sched-cal-close aria-label="' + t('cal.closeCalendar') + '">' +
               '<span aria-hidden="true">&times;</span>' +
             '</button>' +
           '</div>' +
-          '<p class="sched-cal-subtitle">Selecciona un día para consultar disponibilidad (próximamente podrás enviar tu solicitud).</p>' +
+          '<p class="sched-cal-subtitle">' + t('cal.subtitle') + '</p>' +
           '<div class="sched-cal-toolbar">' +
-            '<button type="button" class="sched-cal-nav sched-cal-nav--prev" aria-label="Mes anterior">&lsaquo;</button>' +
+            '<button type="button" class="sched-cal-nav sched-cal-nav--prev" aria-label="' + t('cal.prevMonth') + '">&lsaquo;</button>' +
             '<span class="sched-cal-month-label" id="sched-cal-month-label"></span>' +
-            '<button type="button" class="sched-cal-nav sched-cal-nav--next" aria-label="Mes siguiente">&rsaquo;</button>' +
+            '<button type="button" class="sched-cal-nav sched-cal-nav--next" aria-label="' + t('cal.nextMonth') + '">&rsaquo;</button>' +
           '</div>' +
           '<div class="sched-cal-weekdays" id="sched-cal-weekdays"></div>' +
           '<div class="sched-cal-grid" id="sched-cal-grid"></div>' +
           '<div id="sched-cal-time-wrap" class="sched-cal-time-wrap" hidden aria-hidden="true">' +
-            '<p class="sched-cal-time-heading" id="sched-cal-time-heading">Franja horaria</p>' +
+            '<p class="sched-cal-time-heading" id="sched-cal-time-heading">' + t('cal.timeHeading') + '</p>' +
             '<div class="sched-cal-time-grid" id="sched-cal-time-grid" role="group" aria-labelledby="sched-cal-time-heading"></div>' +
           '</div>' +
           '<div id="sched-cal-booking-slot" class="sched-cal-booking-slot" hidden aria-hidden="true">' +
             '<div id="sched-cal-form-wrap" class="sched-cal-form-wrap" hidden>' +
-              '<p class="sched-cal-form-heading">Datos de reserva</p>' +
+              '<p class="sched-cal-form-heading">' + t('cal.formHeading') + '</p>' +
               '<form id="sched-cal-form" class="sched-cal-form" novalidate>' +
                 '<div class="sched-cal-field">' +
-                  '<label class="sched-cal-label" for="sched-cal-name">Nombre <span class="sched-cal-req" aria-hidden="true">*</span></label>' +
+                  '<label class="sched-cal-label" for="sched-cal-name">' + t('cal.name') + ' <span class="sched-cal-req" aria-hidden="true">*</span></label>' +
                   '<input class="sched-cal-input" id="sched-cal-name" name="user_name" type="text" autocomplete="name" maxlength="120" required>' +
                 '</div>' +
                 '<div class="sched-cal-field">' +
-                  '<label class="sched-cal-label" for="sched-cal-email">Correo electrónico <span class="sched-cal-req" aria-hidden="true">*</span></label>' +
+                  '<label class="sched-cal-label" for="sched-cal-email">' + t('cal.email') + ' <span class="sched-cal-req" aria-hidden="true">*</span></label>' +
                   '<input class="sched-cal-input" id="sched-cal-email" name="user_email" type="email" autocomplete="email" inputmode="email" maxlength="100" required>' +
                 '</div>' +
                 '<div class="sched-cal-field">' +
-                  '<label class="sched-cal-label" for="sched-cal-phone">Teléfono</label>' +
+                  '<label class="sched-cal-label" for="sched-cal-phone">' + t('cal.phone') + '</label>' +
                   '<input class="sched-cal-input" id="sched-cal-phone" name="user_phone" type="tel" autocomplete="tel" maxlength="40">' +
                 '</div>' +
                 '<div class="sched-cal-field">' +
-                  '<label class="sched-cal-label" for="sched-cal-note">Nota</label>' +
-                  '<textarea class="sched-cal-textarea" id="sched-cal-note" name="user_note" rows="3" maxlength="500" placeholder="Motivo de consulta (opcional)"></textarea>' +
+                  '<label class="sched-cal-label" for="sched-cal-note">' + t('cal.note') + '</label>' +
+                  '<textarea class="sched-cal-textarea" id="sched-cal-note" name="user_note" rows="3" maxlength="500" placeholder="' + t('cal.notePlaceholder') + '"></textarea>' +
                   '<div id="sched-cal-note-counter" class="sched-cal-char-counter" aria-live="polite">0 / 500</div>' +
                 '</div>' +
                 '<div class="sched-cal-field sched-cal-field--consent">' +
                   '<input type="checkbox" id="sched-cal-consent" name="privacy_consent" class="sched-cal-consent__input" value="1" autocomplete="off">' +
                   '<label class="sched-cal-consent__label" for="sched-cal-consent">' +
-                    'He leído y acepto la <a href="privacy-policy.html" class="sched-cal-consent__link">política de privacidad</a>.' +
+                    t('cal.consent', {
+                      link: '<a href="privacy-policy.html" class="sched-cal-consent__link">' + t('cal.consentLink') + '</a>'
+                    }) +
                   '</label>' +
                 '</div>' +
                 '<p class="sched-cal-security-strip" role="note">' +
                   '<span class="sched-cal-security-strip__icon" aria-hidden="true">🔒</span>' +
-                  '<span class="sched-cal-security-strip__text">Tus datos están seguros y se transmiten cifrados.</span>' +
+                  '<span class="sched-cal-security-strip__text">' + t('cal.secure') + '</span>' +
                 '</p>' +
                 '<p id="sched-cal-system-msg" class="sched-cal-system-msg" hidden role="alert"></p>' +
-                '<button type="submit" class="sched-cal-submit" id="sched-cal-submit">Reservar cita</button>' +
+                '<button type="submit" class="sched-cal-submit" id="sched-cal-submit">' + t('cal.submit') + '</button>' +
               '</form>' +
             '</div>' +
             '<div id="sched-cal-success" class="sched-cal-feedback sched-cal-feedback--success" hidden>' +
               '<span class="sched-cal-feedback__icon" aria-hidden="true">✓</span>' +
-              '<p class="sched-cal-feedback__text">Gracias. Hemos recibido tu solicitud. Recibirás un correo electrónico de confirmación cuando procesemos tu petición. También te contactaremos pronto para confirmar la cita.</p>' +
-              '<button type="button" class="sched-cal-btn-secondary" id="sched-cal-success-close">Cerrar</button>' +
+              '<p class="sched-cal-feedback__text">' + t('cal.success') + '</p>' +
+              '<button type="button" class="sched-cal-btn-secondary" id="sched-cal-success-close">' + t('cal.close') + '</button>' +
             '</div>' +
             '<div id="sched-cal-error" class="sched-cal-feedback sched-cal-feedback--error" hidden>' +
-              '<p class="sched-cal-feedback__text">Hubo un problema. Por favor, intenta de nuevo o contáctanos directamente.</p>' +
+              '<p class="sched-cal-feedback__text">' + t('cal.error') + '</p>' +
               '<div class="sched-cal-feedback__actions">' +
-                '<button type="button" class="sched-cal-btn-secondary" id="sched-cal-error-retry">Reintentar</button>' +
+                '<button type="button" class="sched-cal-btn-secondary" id="sched-cal-error-retry">' + t('cal.retry') + '</button>' +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -287,7 +294,7 @@
             cell.setAttribute('aria-disabled', 'true');
             cell.setAttribute(
               'aria-label',
-              d + ' de ' + MONTH_NAMES[m] + ' de ' + y + ', no disponible'
+              formatDateParts(d, m, y) + t('cal.unavailable')
             );
           } else {
             cell.dataset.dateKey = key;
@@ -296,11 +303,11 @@
             var labelSuffix = '';
             if (y === todayY && m === todayM && d === todayD) {
               cell.classList.add('sched-cal-day--today');
-              labelSuffix = ', hoy';
+              labelSuffix = t('cal.today');
             }
             cell.setAttribute(
               'aria-label',
-              d + ' de ' + MONTH_NAMES[m] + ' de ' + y + labelSuffix
+              formatDateParts(d, m, y) + labelSuffix
             );
 
             if (selectedDateKey === key) {
@@ -449,24 +456,24 @@
     if (!name) {
       valid = false;
       nameEl.closest('.sched-cal-field').classList.add('sched-cal-field-error');
-      appendFieldMsg(nameEl, 'Este campo es obligatorio.');
+      appendFieldMsg(nameEl, t('cal.required'));
     }
 
     if (!email) {
       valid = false;
       emailEl.closest('.sched-cal-field').classList.add('sched-cal-field-error');
-      appendFieldMsg(emailEl, 'Este campo es obligatorio.');
+      appendFieldMsg(emailEl, t('cal.required'));
     } else if (!EMAIL_REGEX.test(email)) {
       valid = false;
       emailEl.closest('.sched-cal-field').classList.add('sched-cal-field-error');
-      appendFieldMsg(emailEl, 'Introduce un correo válido.');
+      appendFieldMsg(emailEl, t('cal.invalidEmail'));
     }
 
     var consentEl = refs.inputConsent;
     if (consentEl && !consentEl.checked) {
       valid = false;
       consentEl.closest('.sched-cal-field').classList.add('sched-cal-field-error');
-      appendFieldMsg(consentEl, 'Debes aceptar la política de privacidad para continuar.');
+      appendFieldMsg(consentEl, t('cal.consentRequired'));
     }
 
     return valid;
@@ -659,7 +666,8 @@
         from_name: (refs.inputName.value || '').trim(),
         reply_to: (refs.inputEmail.value || '').trim(),
         message: buildBookingWorkerMessage(refs, selectedDateKey, selectedSlotId),
-        selected_date: selectedDateSummary(selectedDateKey, selectedSlotId)
+        selected_date: selectedDateSummary(selectedDateKey, selectedSlotId),
+        lang: PAGE_LANG
       };
 
       fetch(EMAIL_WORKER_URL, {

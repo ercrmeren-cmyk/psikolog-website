@@ -4,6 +4,8 @@
  * Optional env:
  *   EXPOSE_EMAILJS_ERRORS = "1" → include upstream `detail` in JSON (debug only).
  * Omit or any other value → generic `message` to client (reduces info leakage).
+ *   EMAILJS_AUTOREPLY_TEMPLATE_ID_EN → auto-reply template for requests sent from /en/ pages
+ *   (body field lang = "en"). If unset, the default (Spanish) auto-reply template is used.
  */
 export default {
   async fetch(request, env) {
@@ -94,6 +96,8 @@ export default {
     var svc = (env.EMAILJS_SERVICE_ID || '').trim();
     var adminTpl = (env.EMAILJS_ADMIN_TEMPLATE_ID || '').trim();
     var autoTpl = (env.EMAILJS_AUTOREPLY_TEMPLATE_ID || '').trim();
+    var autoTplEn = (env.EMAILJS_AUTOREPLY_TEMPLATE_ID_EN || '').trim();
+    var isEnglish = formData && formData.lang === 'en';
 
     if (!pub || !svc || !adminTpl || !autoTpl) {
       return new Response(
@@ -127,7 +131,7 @@ export default {
       if (!p.email && reply) p.email = reply;
       if (!p.current_date) {
         try {
-          p.current_date = new Date().toLocaleString('es-ES', {
+          p.current_date = new Date().toLocaleString(isEnglish ? 'en-GB' : 'es-ES', {
             dateStyle: 'long',
             timeStyle: 'short'
           });
@@ -183,7 +187,7 @@ export default {
       var autoRes = await fetch(emailjsUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildEmailJsBody(autoTpl))
+        body: JSON.stringify(buildEmailJsBody(isEnglish && autoTplEn ? autoTplEn : autoTpl))
       });
       var autoText = await autoRes.text();
 
