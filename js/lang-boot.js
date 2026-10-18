@@ -72,12 +72,22 @@
     }
   }
 
+  function showActive(group, lang) {
+    group.setAttribute('data-active', lang);
+    var links = group.querySelectorAll('a[data-lang-switch]');
+    for (var i = 0; i < links.length; i++) {
+      links[i].classList.toggle('is-active', links[i].getAttribute('data-lang-switch') === lang);
+    }
+  }
+
   document.addEventListener('click', function (e) {
     var link = e.target.closest && e.target.closest('a[data-lang-switch]');
     if (!link) return;
     var lang = link.getAttribute('data-lang-switch');
     if (!LANGS[lang]) return;
     writePref(lang);
+    var group = link.closest('.lang-switch');
+    if (group) showActive(group, lang);
     if (link.hasAttribute('data-lang-fixed')) return;
     if (lang === pageLang) {
       e.preventDefault();
@@ -85,6 +95,16 @@
     }
     link.setAttribute('href', urlFor(lang) + location.search + location.hash);
   }, true);
+
+  // A page restored from the back/forward cache still shows the thumb moved by the last click.
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    var groups = document.querySelectorAll('.lang-switch');
+    for (var i = 0; i < groups.length; i++) {
+      var current = groups[i].querySelector('a[aria-current="true"]');
+      if (current) showActive(groups[i], current.getAttribute('data-lang-switch'));
+    }
+  });
 
   window.PSIKO_LANG_ROUTE = { lang: pageLang, page: page, urlFor: urlFor };
 })();

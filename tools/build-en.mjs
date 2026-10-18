@@ -102,6 +102,7 @@ function processTag(tag, ctx) {
     let next = value;
 
     if (name === 'html' && attr === 'lang') next = 'en';
+    else if (attr === 'data-active' && /\blang-switch\b/.test(attrs.class || '')) next = 'en';
     else if (TEXT_ATTRS.has(attr)) next = translate(value, ctx);
     else if (name === 'meta' && attr === 'content') {
       const key = attrs.name || attrs.property;
