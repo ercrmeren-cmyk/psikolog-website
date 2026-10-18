@@ -1,6 +1,5 @@
 {
   "_readme": "English text for /en/. Keys are the Spanish text exactly as it appears in the ES pages (whitespace collapsed). 'same' lists text that stays identical in English (names, brands, titles already in English). After editing, run: node tools/build-en.mjs",
-
   "same": [
     "Maria Dolores Barrios Nevado",
     "Maria Dolores",
@@ -39,13 +38,17 @@
     "– Diploma (2022)",
     "Rivera, D., et al. (2017). Stroop Color-Word Interference Test: Normative data for Spanish-speaking paediatric population.",
     "Arango-Lasprilla, J.C., et al. (2017). Rey–Osterrieth Complex Figure: Normative data for Spanish-speaking paediatric populations.",
-    "NeuroRehabilitation"
+    "NeuroRehabilitation",
+    "You feel exhausted, your mind does not stop, you feel you are constantly racing and that you can not continue like that although you are unable to stop. You are still on top of everything but the physical, emotional and social cost is too much.",
+    "I totally understand where you are coming from because I have been there and I have helped many people in that same situation. We will review what is keeping you in this situation; the cycle of anxiety - pressure - guilt you are under and we will work together so you can regain the control of your life, developing a more balanced and happy life and regaining your well-being.",
+    "The online format lets you do this comfortably from the comfort of your sofa, at your own pace, and allowing you to balance the rest of the responsibilities of life."
   ],
-
   "replace": [
-    ["?text=Hola,%20me%20pongo%20en%20contacto%20desde%20su%20web.", "?text=Hello,%20I%E2%80%99m%20getting%20in%20touch%20through%20your%20website."]
+    [
+      "?text=Hola,%20me%20pongo%20en%20contacto%20desde%20su%20web.",
+      "?text=Hello,%20I%E2%80%99m%20getting%20in%20touch%20through%20your%20website."
+    ]
   ],
-
   "strings": {
     "Navegación principal": "Main navigation",
     "Abrir o cerrar menú principal": "Open or close main menu",
@@ -55,17 +58,15 @@
     "Áreas": "Expertise",
     "Reflexiones": "Reflections",
     "Contacto": "Contact",
-    "Psicóloga General Sanitaria": "General Health Psychologist",
-
+    "Psicóloga General Sanitaria": "Practitioner Clinical Psychologist",
     "Maria Dolores Barrios Nevado · Psicóloga Clínica": "Maria Dolores Barrios Nevado · Clinical Psychologist",
     "Psicóloga clínica con formación internacional y experiencia en NHS. Terapia basada en evidencia para niños, adolescentes y adultos.": "Clinical psychologist with international training and NHS experience. Evidence-based therapy for children, adolescents and adults.",
-
     "Terapia psicológica · Online": "Psychological therapy · Online",
-    "Llevas tanto tiempo intentando controlar tu mente,": "You’ve spent so long trying to control your mind",
+    "Llevas tanto tiempo intentando controlar tu mente,": "You are trying so hard to control your mind",
     "que dejaste de": "that you stopped",
-    "disfrutar tu vida": "enjoying your life",
-    "Te ayudo a salir del bucle de la ansiedad, la autoexigencia y el pensar de mas para que vuelvas a:": "I help you break free from the loop of anxiety, self-pressure and overthinking, so you can get back to:",
-    "vivir con calma, disfrutar del presente y sentirte en paz contigo.": "living calmly, enjoying the present and feeling at peace with yourself.",
+    "disfrutar tu vida": "living your life",
+    "Te ayudo a salir del bucle de la ansiedad, la autoexigencia y el pensar de mas para que vuelvas a:": "I help you breaking the cycle of anxiety, self-pressure and guilt, so you can get back to",
+    "vivir con calma, disfrutar del presente y sentirte en paz contigo.": "living your life, enjoying the present and feeling at peace with yourself.",
     "Empieza ahora": "Start now",
     "Conóceme": "Get to know me",
     "Terapia basada en evidencia": "Evidence-based therapy",
@@ -74,7 +75,6 @@
     "Maria Dolores Barrios Nevado, psicóloga clínica, en su consulta": "Maria Dolores Barrios Nevado, clinical psychologist, in her consulting room",
     "Espacio seguro": "Safe space",
     "Colegiada COPAO nº 10777": "COPAO registration no. 10777",
-
     "Te gustaría poder…?": "Would you like to…?",
     "Recuperar tu energía": "Regain your energy",
     "Dejar atrás el agotamiento constante y despertar con vitalidad renovada.": "Leave constant exhaustion behind and wake up with renewed vitality.",
@@ -83,17 +83,15 @@
     "Sentirte en control": "Feel in control",
     "Recuperar el timón de tu vida sin que la ansiedad tome las decisiones.": "Take back the helm of your life without letting anxiety make the decisions.",
     "Volver a conectar contigo": "Reconnect with yourself",
-    "Escucharte, respetarte y sentirte orgulloso/a de quien eres.": "Listen to yourself, respect yourself and feel proud of who you are.",
-
+    "Escucharte, respetarte y sentirte orgulloso/a de quien eres.": "Listen to your inner self, honouring your wishes, setting boundaries and feeling proud of who you are.",
     "Una pausa de 40 segundos": "A 40-second pause",
-    "Antes de seguir leyendo, respira conmigo": "Before you read on, breathe with me",
+    "Antes de seguir leyendo, respira conmigo": "Before you continue, let's take a pause to breathe",
     "No necesitas una sesión para empezar a bajar el ruido. Este es uno de los primeros ejercicios que enseño en consulta: cuando alargas la exhalación, tu cuerpo entiende que puede soltar la alarma.": "You don’t need a session to start turning down the noise. This is one of the first exercises I teach in therapy: when you lengthen your out-breath, your body understands that it can let go of the alarm.",
     "Suelta los hombros, apoya los pies en el suelo y sigue el círculo.": "Drop your shoulders, rest your feet on the floor and follow the circle.",
     "Empezar": "Start",
     "Respira": "Breathe",
     "Eso es todo. Puede que notes muy poco, o puede que nada: también está bien.": "That’s it. You may notice very little, or nothing at all, and that’s fine too.",
     "Lo importante es que tu cuerpo sabe calmarse cuando le das las condiciones. En terapia aprendemos a dárselas mucho más allá de estos 40 segundos.": "What matters is that your body knows how to calm down when you give it the right conditions. In therapy, we learn to create them far beyond these 40 seconds.",
-
     "Un momento de honestidad": "A moment of honesty",
     "¿Te reconoces en esto?": "Do you recognise yourself in this?",
     "Marca las frases que sientas tuyas. Nadie las verá ni se envían a ningún sitio: esto es solo para ti.": "Select the statements that feel like yours. Nobody will see them and they aren’t sent anywhere: this is just for you.",
@@ -107,18 +105,16 @@
     "Me hablo a mí misma como nunca le hablaría a una amiga.": "I talk to myself in a way I would never talk to a friend.",
     "Hablemos de esto": "Let’s talk about this",
     "Conoce cómo trabajo": "See how I work",
-
     "MI NOMBRE ES MARILO BARRIOS": "MY NAME IS MARILO BARRIOS",
-    "Psicóloga General Sanitaria, colegiada COPAO (nº 10777)": "General Health Psychologist, registered with COPAO (no. 10777)",
+    "Psicóloga General Sanitaria, colegiada COPAO (nº 10777)": "Practitioner clinical psychologist, registered with COPAO (no. 10777)",
     "Especializada en Clínica, Forense y Neuropsicología": "Specialising in clinical, forensic and neuropsychology",
-    "La terapia es un espacio para dejar de sobrevivir en tu cabeza y empezar a entenderte sin juzgarte. Descubrirás qué alimenta tu ansiedad y tu autoexigencia, aprenderás herramientas para sentirte más tranquila y empezarás a relacionarte contigo desde un lugar mucho más amable.": "Therapy is a space to stop just surviving inside your head and start understanding yourself without judgement. You’ll discover what fuels your anxiety and self-pressure, learn tools to feel calmer and begin relating to yourself from a much kinder place.",
+    "La terapia es un espacio para dejar de sobrevivir en tu cabeza y empezar a entenderte sin juzgarte. Descubrirás qué alimenta tu ansiedad y tu autoexigencia, aprenderás herramientas para sentirte más tranquila y empezarás a relacionarte contigo desde un lugar mucho más amable.": "Therapy is a space where you can stop the survival mode and where we will work together to start understanding yourself at a pace you feel safe and comfortable and without judgement. Together we will find out what it is beneath your anxiety why do you keep putting so much pressure on yourself and breaking free from guilt. You will learn tools to feel more in control and relating to yourself from a much kinder place.",
     "El miedo es adaptativo y todos tenemos miedo, sobre todo cuando nos enfrentamos a algo nuevo. Citando a Sussan Jeffers y las": "Fear is adaptive and we all feel it, especially when we face something new. In the words of Susan Jeffers and her",
     "“Verdades sobre el miedo”": "“Truths About Fear”",
     "El miedo nunca desaparecerá mientras yo siga creciendo.": "The fear will never go away as long as I continue to grow.",
     "La única manera de liberarse del miedo a hacer algo es... hacerlo.": "The only way to get rid of the fear of doing something is to go out and... do it.",
     "La única manera de sentirme mejor es... hacerlo.": "The only way to feel better about myself is to go out and... do it.",
     "Conóceme mejor →": "Get to know me →",
-
     "¿Cómo trabajamos juntas?": "How do we work together?",
     "Escucha activa": "Active listening",
     "Te comprendo sin juicios, en un espacio seguro.": "I understand you without judgement, in a safe space.",
@@ -126,27 +122,15 @@
     "Identificamos qué te bloquea y por qué.": "We identify what’s holding you back and why.",
     "Herramientas prácticas": "Practical tools",
     "Estrategias personalizadas para tu día a día.": "Personalised strategies for everyday life.",
-    "Equilibrio sostenible": "Lasting balance",
+    "Equilibrio sostenible": "Life Lasting Effect",
     "Te ayudo a mantener el bienestar a largo plazo.": "I help you maintain your well-being in the long term.",
-
     "Descripción de mis servicios": "My services",
     "Sesiones online": "Online sessions",
     "Sesiones de psicología online": "Online psychology sessions",
     "Qué ofrecen las sesiones online": "What online sessions offer",
-    "Te sientes agotada, con la mente que no para y la sensación de": "You feel exhausted, your mind won’t switch off and you have the sense that",
-    "no poder más": "you can’t go on",
-    ", aunque sigas cumpliendo con todo.": ", even though you keep on top of everything.",
-    "Trabajaremos tus bloqueos emocionales y la autoexigencia para que recuperes": "We’ll work through your emotional blocks and self-pressure so you can regain",
-    "tu equilibrio": "your balance",
-    "y": "and",
-    "bienestar": "well-being",
-    "El formato online te permite hacerlo de forma cómoda, sin desplazamientos y adaptado a": "The online format lets you do this comfortably, without travelling, and at",
-    "tu ritmo": "your own pace",
-    ", incluso en los momentos en los que más lo necesitas.": ", even at the times you need it most.",
     "Talleres online": "Online workshops",
     "Talleres online y clases grupales": "Online workshops and group classes",
-    "También puedes acceder a espacios en grupo donde abordamos temas como la ansiedad, la autoexigencia o el agotamiento desde un enfoque psicológico. Un entorno guiado donde entender lo que te pasa, compartir si lo necesitas y aprender herramientas prácticas junto a otras personas que están pasando por lo mismo.": "You can also join group sessions where we explore topics such as anxiety, self-pressure and burnout from a psychological perspective. A guided space to understand what you’re going through, share if you need to and learn practical tools alongside others in the same situation.",
-
+    "También puedes acceder a espacios en grupo donde abordamos temas como la ansiedad, la autoexigencia o el agotamiento desde un enfoque psicológico. Un entorno guiado donde entender lo que te pasa, compartir si lo necesitas y aprender herramientas prácticas junto a otras personas que están pasando por lo mismo.": "You can also join group sessions where we explore topics such as anxiety, perfectionism and burnout from a psychological perspective. A shared space that can complement the journey you are going through and where you can continue learning practical tools alongside others in the same situation.",
     "Reserva tu Primera Cita a un precio reducido": "Book Your First Appointment at a Reduced Price",
     "Acompañamiento profesional adaptado a ti": "Professional support tailored to you",
     "Sesion Individual": "Individual Session",
@@ -161,9 +145,8 @@
     "BONO 4 SESIONES": "4-SESSION PACKAGE",
     "Ahorras 20 €": "Save €20",
     "Abonado en un solo pago": "Paid in a single payment",
-    "¿Lista para recuperar tu energía?": "Ready to get your energy back?",
-    "Reserva tu primera cita a precio reducido y empieza a sentirte mejor.": "Book your first appointment at a reduced price and start feeling better.",
-
+    "¿Lista para recuperar tu energía?": "Ready to get the control of your life back?",
+    "Reserva tu primera cita a precio reducido y empieza a sentirte mejor.": "Book your first appointment now and start feeling better.",
     "Esto Es Lo Que Opinan Mis Clientes": "What My Clients Say",
     "Testimonios anteriores": "Previous testimonials",
     "Testimonios siguientes": "Next testimonials",
@@ -183,23 +166,20 @@
     "Testimonio de cliente 7": "Client testimonial 7",
     "Testimonio de cliente 8": "Client testimonial 8",
     "Testimonio de cliente 9": "Client testimonial 9",
-
     "Entorno terapéutico tranquilo": "Calm therapeutic setting",
     "Espacio seguro y acogedor": "Safe, welcoming space",
     "Paz y tranquilidad": "Peace and calm",
     "Tómate tu tiempo": "Take your time",
-
     "Lo que te dices cuando algo no está bien": "What you tell yourself when something isn’t right",
     "Pensamientos que quizás reconoces como tuyos": "Thoughts you may recognise as your own",
     "No tengo tiempo para esto": "I don’t have time for this",
-    "Lo que no tienes es más energía para seguir viviendo así. Te levantas cansada, pasas el día con la mente acelerada y llegas a la noche sin haber desconectado de verdad. ¿Y aun así sientes que no puedes parar? Seguir ignorándote también tiene un precio… y cada día es más alto. No necesitas más tiempo, necesitas dejar de dejarte para después.": "What you don’t have is the energy to keep living like this. You wake up tired, spend the day with your mind racing and reach the night without ever truly switching off. And still you feel you can’t stop? Ignoring yourself comes at a price too… and it gets higher every day. You don’t need more time; you need to stop putting yourself last.",
-    "Yo nunca he pedido ayuda. Puedo con esto solo/a": "I’ve never asked for help. I can handle this on my own",
-    "Claro que puedes… llevas tiempo demostrándolo. Pero por dentro estás cada vez más agotada, más ansiosa, más lejos de ti. Y aun así, te frena pedir ayuda porque te da miedo dejar de ser la fuerte, la que puede con todo. Pero mírate… esta versión al límite tampoco es quien quieres ser. No tienes que romperte para permitirte apoyo. Aceptarlo no te hace débil, te permite volver a ser tú.": "Of course you can… you’ve been proving it for a long time. But inside you’re more and more exhausted, more anxious, further away from yourself. And still, something stops you asking for help, because you’re afraid of no longer being the strong one, the one who can handle everything. But look at yourself… this version of you, pushed to the limit, isn’t who you want to be either. You don’t have to break before you allow yourself support. Accepting it doesn’t make you weak; it lets you be yourself again.",
-    "No es para tanto… puedo aguantar": "It’s not that bad… I can cope",
-    "Eso es lo que te dices mientras tu cabeza no para, duermes mal y sientes que cada día pesa más. Te has acostumbrado a vivir así, pero eso no lo convierte en normal. Aguantar no es estar bien… es sobrevivir. Y en el fondo lo sabes: no quieres que esta sea tu vida.": "That’s what you tell yourself while your mind won’t stop, you sleep badly and every day feels heavier. You’ve got used to living like this, but that doesn’t make it normal. Coping isn’t the same as being well… it’s surviving. And deep down you know it: you don’t want this to be your life.",
-    "¿Y si no me funciona?": "What if it doesn’t work for me?",
-    "Lo que más miedo da no es que no funcione… es que nada cambie. Seguir sintiéndote atrapada, agotada, desconectada de ti, mientras todo sigue igual por fuera. Ya has intentado tirar más fuerte, exigirte más, aguantar más… y solo te ha traído hasta aquí. Quizá no se trata de poder más, sino de dejar de hacerlo sola y empezar a hacerlo diferente.": "The scariest thing isn’t that it might not work… it’s that nothing changes. Carrying on feeling trapped, exhausted and disconnected from yourself, while on the outside everything stays the same. You’ve already tried pushing harder, demanding more of yourself, holding on longer… and it has only brought you here. Maybe it isn’t about being able to do more, but about no longer doing it alone and starting to do it differently.",
-
+    "Lo que no tienes es más energía para seguir viviendo así. Te levantas cansada, pasas el día con la mente acelerada y llegas a la noche sin haber desconectado de verdad. ¿Y aun así sientes que no puedes parar? Seguir ignorándote también tiene un precio… y cada día es más alto. No necesitas más tiempo, necesitas dejar de dejarte para después.": "What you don’t have is the energy or the need to keep living like this. You wake up already tired, you spend the day with your mind racing and you end without being able to truly switching off. And still you might feel you cannot stop. Ignoring yourself comes at a price… which gets higher every day. You don’t need more time to do more time, what you really need is to start putting yourself and your needs first.",
+    "Yo nunca he pedido ayuda. Puedo con esto solo/a": "I can not ask for help, I need to sort this out on my own",
+    "Claro que puedes… llevas tiempo demostrándolo. Pero por dentro estás cada vez más agotada, más ansiosa, más lejos de ti. Y aun así, te frena pedir ayuda porque te da miedo dejar de ser la fuerte, la que puede con todo. Pero mírate… esta versión al límite tampoco es quien quieres ser. No tienes que romperte para permitirte apoyo. Aceptarlo no te hace débil, te permite volver a ser tú.": "You can do everything and everything alone and you have been proving it for a long time. But as days go by, you feel more and more exhausted, more anxious and feeling further away from yourself. And still, something stops you asking for help, because you are afraid of no longer being the strong one, the one who can handle everything. But if you look at yourself… this version of you, who is pushed to the limit, is not who you want to be either. You do not have to break down before you allow yourself to have some help. Accepting this does not make you weak, it makes you human and it is the first step to be yourself again.",
+    "No es para tanto… puedo aguantar": "It’s not that bad… I still can cope",
+    "Eso es lo que te dices mientras tu cabeza no para, duermes mal y sientes que cada día pesa más. Te has acostumbrado a vivir así, pero eso no lo convierte en normal. Aguantar no es estar bien… es sobrevivir. Y en el fondo lo sabes: no quieres que esta sea tu vida.": "That is what you tell yourself while your mind does not stop, you can hardly sleep, your day feels heavier each day and your energy disappears. Now you are used to living this way but that does not make it normal. Coping isn’t the same as being well… it’s surviving. And deep down you know it: you don’t want this to be your life.",
+    "¿Y si no me funciona?": "What if it does not work for me? What if nothing changes?",
+    "Lo que más miedo da no es que no funcione… es que nada cambie. Seguir sintiéndote atrapada, agotada, desconectada de ti, mientras todo sigue igual por fuera. Ya has intentado tirar más fuerte, exigirte más, aguantar más… y solo te ha traído hasta aquí. Quizá no se trata de poder más, sino de dejar de hacerlo sola y empezar a hacerlo diferente.": "The scariest thing isn’t that it might not work… it’s that nothing changes. Carrying on feeling trapped, exhausted and disconnected from yourself, while on the outside everything stays the same. You have already tried pushing harder, organising your days better, doing more and/or putting more pressure on yourself, holding on a little longer… and it has only brought you here to this place where you are suffering. Maybe it isn’t about being able to do more, but to start feeling that you don't need to do that much and that you don't need to do everything by yourself.",
     "¿Te suena familiar?": "Sound familiar?",
     "¿Te identificas con alguna de estas situaciones?": "Do you recognise yourself in any of these situations?",
     "¡Entonces esto es para ti!": "Then this is for you!",
@@ -218,7 +198,6 @@
     "Antes de que todo pesara tanto… antes de que tu cabeza no parara nunca.": "Before everything felt so heavy… before your mind never stopped.",
     "Ahora solo sobrevives el día, intentando llegar a todo, mientras te vas perdiendo poco a poco.": "Now you just get through the day, trying to keep up with everything, while slowly losing yourself.",
     "Y en el fondo lo sabes… si sigues así, no es que nada cambie… es que te vas a perder a ti mismo, por completo.": "And deep down you know it… if you carry on like this, it’s not just that nothing will change… you’ll lose yourself completely.",
-
     "Dudas frecuentes": "Common questions",
     "Preguntas frecuentes": "Frequently asked questions",
     "Todo lo que quizás te estás preguntando antes de dar el paso": "Everything you may be wondering before taking the first step",
@@ -253,14 +232,12 @@
     "Y si finalmente decides no continuar, me comprometo a ayudarte a encontrar": "And if you finally decide not to continue, I’ll help you find",
     "otras alternativas profesionales": "other professional options",
     "que se ajusten mejor a lo que necesitas… siempre que tú lo quieras.": "that better suit your needs… if that’s what you’d like.",
-
     "¿Listo para dar un paso?": "Ready to take the first step?",
     "Contáctame hoy para empezar a sentirte mejor.": "Get in touch today and start feeling better.",
     "Confidencialidad absoluta": "Complete confidentiality",
     "Respuesta en 24h": "Reply within 24h",
     "HCPC Registrada": "HCPC registered",
     "Escribir un mail": "Send an email",
-
     "Voces reales": "Real voices",
     "Más palabras bonitas de mis pacientes": "More kind words from my clients",
     "Hola Alejandro, qué tal te encuentras ahora al estar terminado tu proceso terapéutico?": "Hi Alejandro, how are you feeling now that you’ve finished your therapy?",
@@ -268,10 +245,8 @@
     "vía WhatsApp": "via WhatsApp · translated from Spanish",
     "He tenido la gran suerte de contar con la ayuda de Marilò en diferentes momentos de mi vida lo que me ha permitido ver su increíble capacidad para explicar los mecanismos psicológicos detrás de emociones y comportamientos que antes me generaban confusión o malestar, con una gran claridad, lógica y serenidad así como sensibilidad a la hora de abordar cada tema, mostrando una increíble empatía, transmitiendo confianza. Su talento y una vocación son innegables y es capaz de crear un espacio en el que uno se siente escuchado, comprendido y acompañado.": "I’ve been lucky enough to have Marilò’s help at different moments in my life, which has shown me her incredible ability to explain the psychological mechanisms behind emotions and behaviours that used to confuse or upset me. She does it with great clarity, logic and calm, and with real sensitivity in approaching each topic, showing incredible empathy and inspiring trust. Her talent and vocation are undeniable, and she creates a space where you feel heard, understood and supported.",
     "Gracias Luchita 🥹🫶🏼❤️": "Thank you, Luchita 🥹🫶🏼❤️",
-
     "Consultar disponibilidad para cita": "Check appointment availability",
     "Haz clic aquí para consultar la disponibilidad.": "Click here to check availability.",
-
     "Terapia basada en evidencia.": "Evidence-based therapy.",
     "Contigo, desde el primer paso.": "With you, from the very first step.",
     "Información Rápida": "At a Glance",
@@ -283,7 +258,6 @@
     "© 2026 Maria Dolores Barrios Nevado. Todos los derechos reservados. &nbsp;·&nbsp;": "© 2026 Maria Dolores Barrios Nevado. All rights reserved. &nbsp;·&nbsp;",
     "Política de privacidad": "Privacy policy",
     "Diseño y desarrollo: Ern Web Studio": "Designed &amp; Developed by Ern Web Studio",
-
     "Sobre mí · Maria Dolores Barrios Nevado": "About Me · Maria Dolores Barrios Nevado",
     "Psicóloga clínica Maria Dolores Barrios Nevado: formación, experiencia clínica, herramientas de evaluación y enfoques terapéuticos.": "Clinical psychologist Maria Dolores Barrios Nevado: training, clinical experience, assessment tools and therapeutic approaches.",
     "Perfil Profesional": "Professional Profile",
@@ -320,7 +294,6 @@
     "📋 ISST – International Society of Schema Therapy (Miembro / en formación)": "📋 ISST – International Society of Schema Therapy (Member / in training)",
     "Investigación y Publicaciones": "Research and Publications",
     "📩 Contacta para cita o información →": "📩 Get in touch to book or ask a question →",
-
     "Áreas de Trabajo · Maria Dolores Barrios Nevado | Psicóloga Clínica": "Areas of Expertise · Maria Dolores Barrios Nevado | Clinical Psychologist",
     "Áreas de especialización de Maria Dolores Barrios Nevado, psicóloga clínica: salud mental infanto-juvenil, psicología forense, neuropsicología, terapia de esquemas, terapia online y más.": "Areas of expertise of Maria Dolores Barrios Nevado, clinical psychologist: child and adolescent mental health, forensic psychology, neuropsychology, schema therapy, online therapy and more.",
     "Áreas de Trabajo y Especialidades": "Areas of Expertise and Specialisms",
@@ -350,7 +323,6 @@
     "Terapia Online (Inglés y Español)": "Online Therapy (English and Spanish)",
     "Sesiones online en inglés y español a través de plataformas seguras. Terapia individual para adultos en ansiedad, depresión, autoestima y trastorno por estrés postraumático.": "Online sessions in English and Spanish through secure platforms. Individual therapy for adults experiencing anxiety, depression, low self-esteem and post-traumatic stress disorder.",
     "Información y cita →": "Information and appointments →",
-
     "Reflexiones · Maria Dolores Barrios Nevado": "Reflections · Maria Dolores Barrios Nevado",
     "Artículos actuales sobre psicología clínica, neuropsicología, trauma, terapia de esquemas y ACT. Blog de Maria Dolores Barrios Nevado, psicóloga clínica.": "Current articles on clinical psychology, neuropsychology, trauma, schema therapy and ACT. Blog by Maria Dolores Barrios Nevado, clinical psychologist.",
     "Escritos actuales sobre psicología clínica, neuropsicología y trauma": "Current writing on clinical psychology, neuropsychology and trauma",
@@ -376,7 +348,6 @@
     "Terapia Cognitivo-Conductual en Niños": "Cognitive Behavioural Therapy with Children",
     "📅 20 Feb 2026 · 5 min": "📅 20 Feb 2026 · 5 min read",
     "La importancia de involucrar a la familia en el proceso terapéutico al trabajar con niños menores de 6 años y estrategias para posicionar a los padres como \"co-terapeutas\".": "Why it matters to involve the family in therapy when working with children under 6, and strategies for positioning parents as \"co-therapists\".",
-
     "Contacto · Maria Dolores Barrios Nevado | Psicóloga Clínica": "Contact · Maria Dolores Barrios Nevado | Clinical Psychologist",
     "Contacta con Maria Dolores Barrios Nevado, psicóloga clínica. Solicita cita o información a través del formulario o por email.": "Contact Maria Dolores Barrios Nevado, clinical psychologist. Request an appointment or information through the form or by email.",
     "Escribe para preguntar o reservar una cita": "Write to ask a question or book an appointment",
@@ -398,7 +369,6 @@
     "¡Tu mensaje ha sido enviado! Te responderé pronto.": "Your message has been sent! I’ll get back to you soon.",
     "Ubicación": "Location",
     "Londres, Reino Unido (sesiones online disponibles)": "London, United Kingdom (online sessions available)",
-
     "Política de privacidad · Maria Dolores Barrios Nevado": "Privacy Policy · Maria Dolores Barrios Nevado",
     "Información sobre el tratamiento de datos personales conforme al RGPD: reservas de cita, contacto y uso de este sitio web.": "How personal data is processed under the GDPR: appointment bookings, contact and use of this website.",
     "Protección de datos y transparencia en el uso de esta web": "Data protection and transparency in the use of this website",
@@ -447,11 +417,17 @@
     "12. Contacto": "12. Contact",
     "Para cualquier duda sobre privacidad o el tratamiento de sus datos:": "For any questions about privacy or how your data is processed:"
   },
-
   "pages": {
     "index.html": {
       "replace": [
-        ["\"jobTitle\":\"Psicóloga Clínica\",\"url\":\"https://menteconmpsicologia.com/\"", "\"jobTitle\":\"Clinical Psychologist\",\"url\":\"https://menteconmpsicologia.com/en/\""]
+        [
+          "\"jobTitle\":\"Psicóloga Clínica\",\"url\":\"https://menteconmpsicologia.com/\"",
+          "\"jobTitle\":\"Clinical Psychologist\",\"url\":\"https://menteconmpsicologia.com/en/\""
+        ],
+        [
+          "<li>\r\n              <span class=\"ref-service-point-glyph\" aria-hidden=\"true\"></span>\r\n              <span class=\"ref-service-point-body\">Te sientes agotada, con la mente que no para y la sensación de <strong>no poder más</strong>, aunque sigas cumpliendo con todo.</span>\r\n            </li>\r\n            <li>\r\n              <span class=\"ref-service-point-glyph\" aria-hidden=\"true\"></span>\r\n              <span class=\"ref-service-point-body\">Trabajaremos tus bloqueos emocionales y la autoexigencia para que recuperes <strong>tu equilibrio</strong> y <strong>bienestar</strong>.</span>\r\n            </li>\r\n            <li>\r\n              <span class=\"ref-service-point-glyph\" aria-hidden=\"true\"></span>\r\n              <span class=\"ref-service-point-body\">El formato online te permite hacerlo de forma cómoda, sin desplazamientos y adaptado a <strong>tu ritmo</strong>, incluso en los momentos en los que más lo necesitas.</span>\r\n            </li>",
+          "            <li>\n              <span class=\"ref-service-point-glyph\" aria-hidden=\"true\"></span>\n              <span class=\"ref-service-point-body\">You feel exhausted, your mind does not stop, you feel you are constantly racing and that you can not continue like that although you are unable to stop. You are still on top of everything but the physical, emotional and social cost is too much.</span>\n            </li>\n            <li>\n              <span class=\"ref-service-point-glyph\" aria-hidden=\"true\"></span>\n              <span class=\"ref-service-point-body\">I totally understand where you are coming from because I have been there and I have helped many people in that same situation. We will review what is keeping you in this situation; the cycle of anxiety - pressure - guilt you are under and we will work together so you can regain the control of your life, developing a more balanced and happy life and regaining your well-being.</span>\n            </li>\n            <li>\n              <span class=\"ref-service-point-glyph\" aria-hidden=\"true\"></span>\n              <span class=\"ref-service-point-body\">The online format lets you do this comfortably from the comfort of your sofa, at your own pace, and allowing you to balance the rest of the responsibilities of life.</span>\n            </li>"
+        ]
       ]
     }
   }
